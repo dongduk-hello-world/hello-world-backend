@@ -1,11 +1,17 @@
 # React와 Spring boot를 한번에 빌드해서 실행하기
-
 ## 📁 실행하는 방법
 
 ### 1. MAVEN 다운로드하기
+다운로드 링크: https://maven.apache.org/download.cgi
+![](https://velog.velcdn.com/images/heoze/post/75381030-dd75-4808-9b79-5659031f8270/image.png)
 
-- 다운로드 링크: https://maven.apache.org/download.cgi
-- Link 중에 `bin.zip`로 download
+다운로드한 파일을 적절한 폴더 압축을 풀고, 그 경로로 **환경 변수 설정**을 한다.
+
+새 사용자 변수 추가: `MAVEN_HOME` > 압축을 푼 폴더
+시스템 변수 편집: `Path` > 압축을 푼 폴더 + \bin
+
+명령 프롬포트에서 `mvn -n`을 입력할 때 버전이 뜨는지 확인되면 잘 설치가 된 것이다.
+
 
 ### 2. 명령 프롬포트를 켜서 프로젝트 폴더로 이동한다.
 
@@ -23,15 +29,12 @@ mvn clean install
 java -jar target/[생성된 jar 파일]
 ```
 
-### 5. http://localhost:8080/ 으로 접속한다.
+### 5. http://localhost:8080/ 으로 접속해서 실행 결과를 확인해본다.
+![](https://velog.velcdn.com/images/heoze/post/92ddaf4a-49cf-4b7a-9735-3fdff268c05c/image.png)
 
 <br>
 
-[참고] https://github.com/kantega/react-and-spring
-
-<br>
-
-## 프로젝트 변형하기
+## 🔧 프로젝트 변형하기
 
 ### node & npm 버전 설정하기
 
@@ -55,6 +58,7 @@ node와 npm의 버전을 수정하려면 `pom.xml`에서 다음 부분을 수정
 ### react 프로젝트 수정하기
 
 src/main/webapp 폴더 안에 create-react-app 프로젝트가 들어있다.
+이 안에 파일들을 수정하면 된다.
 
 react 프로젝트의 경로를 바꾸려면 `pom.xml`에서 다음 부분을 수정해야 한다.
 
@@ -75,7 +79,7 @@ react 프로젝트의 경로를 바꾸려면 `pom.xml`에서 다음 부분을 �
 
 <br>
 
-## 통합 빌드 & 실행 원리
+## 🤔 통합 빌드 & 실행 원리
 
 플러그인 2가지를 활용한다.
 
@@ -162,3 +166,8 @@ xml 기반의 기능 설정 파일로 미리 정의된 작업(파일 복사, 소
     </executions>
 </plugin>
 ```
+
+<br>
+
+[참고] https://github.com/kantega/react-and-spring
+이 곳에서는 start.spring.io에서 생성한 spring-boot 프로젝트에서 통합 빌드 환경을 세팅하는 방법이 처음부터 설명이 되어 있다.
