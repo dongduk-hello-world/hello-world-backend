@@ -1,4 +1,4 @@
-# React와 Spring boot를 한번에 빌드해서 실행하기
+# React와 Spring boot를 한번에 빌드해서 실행하기 (Maven 프로젝트)
 ## 📁 실행하는 방법
 
 ### 1. MAVEN 다운로드하기
