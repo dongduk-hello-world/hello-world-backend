@@ -4,9 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HelloWroldApplication {
+public class HelloWorldApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HelloWroldApplication.class, args);
+		SpringApplication.run(HelloWorldApplication.class, args);
 	}
+
 }
