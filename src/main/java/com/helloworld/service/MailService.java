@@ -26,6 +26,7 @@ public class MailService {
 		}
 		return authCode;
 	}
+	
 	private void send(String email, String authCode) {
 		SimpleMailMessage message = new SimpleMailMessage(); 
 		message.setFrom("ddwu.helloworld@gmail.com");

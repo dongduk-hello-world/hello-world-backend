@@ -16,14 +16,14 @@ import lombok.Setter;
 public class LoginController {
 	
 	@PostMapping
-    public String login(@RequestBody LoginRequest request) {
+    public long login(@RequestBody LoginRequest request) {
 		String email = request.getEmail();
 		String password = request.getPassword();
 		
 		if(!(email.equals("1234@dongduk.ac.kr") && password.equals("1234"))) {
 			throw new UserNotFoundException("user not found");
 		}
-		return "성공";
+		return 123;
     }
 }
 

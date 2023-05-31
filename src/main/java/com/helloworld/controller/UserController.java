@@ -19,18 +19,20 @@ public class UserController {
 		// request body에 있는 정보로 user 등록
 		return user;
     }
-	
-	@PutMapping("/users/{userId}/password")
-    public List<String> changePassword(@PathVariable long userId) {
+
+	@PutMapping("/{userId}/password")
+    public boolean changePassword(@RequestBody String password) {
 		// request body에 있는 password로 변경
-		return null;
+		System.out.println("password를 " + password + "로 변경했습니다~~!!");
+		return true;
     }
 
-	@GetMapping("/users/{userId}/subjects")
+	@GetMapping("/{userId}/subjects")
     public List<String> getSubjectList(@PathVariable long userId) {
 		// 해당 user가 수강하고 있는 과목의 리스트를 반환
 		return null;
     }
+	
 }
 
 class User {
