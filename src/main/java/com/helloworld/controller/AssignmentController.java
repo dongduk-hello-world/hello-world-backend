@@ -18,7 +18,7 @@ public class AssignmentController {
     public List<String> add() {
 		// assignment 등록
 		return null;
-    }	
+    }
 	
 	@GetMapping("/{assignmentId}")
 	public List<String> get(@PathVariable long assignmentId) {
@@ -61,5 +61,23 @@ public class AssignmentController {
 	public List<String> getResultCode(@PathVariable long assignmentId, @PathVariable long userId, @PathVariable long testId) {
 		// user가 제출한 코드를 return
 		return null;
+	}
+}
+
+class Test {
+	String name;
+	String description;
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
