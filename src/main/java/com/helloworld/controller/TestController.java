@@ -87,7 +87,9 @@ public class TestController {
     		default:
     			break;
     	}
-    	String dpath = path + "/" + userId + "/" + testId + "_" + submitId + end;
+    	String spath = userId + "/" + testId + "/" + submitId;
+    	String tpath = path + "/" + spath;
+    	String dpath = tpath + "/Main" + end;
     	File dfile = new File(dpath);
     	try {
     		BufferedWriter writer = new BufferedWriter(new FileWriter(dfile));
@@ -96,37 +98,66 @@ public class TestController {
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
-    	
-		String tag = userId + "_" + type;
-		String containerId = dockerService.getId(tag);
-    	if(containerId.equals("none")) {
-        	String cpath = new ClassPathResource("docker").getPath() + "/" + userId + "/Dockerfile_" + type;
-        	File cfile = new File(cpath);
-        	try {
-        		BufferedWriter writer = new BufferedWriter(new FileWriter(cfile));
-        		switch(type) {
-	        		case "python":
-		        		writer.write("FROM python:3\n");
-		        		writer.write("WORKDIR /usr/src/app\n");
-		        		if(!require.isEmpty()) {
-		        			writer.write("COPY ./requirements.txt ./\n");
-		        			writer.write("RUN pip install --no-cache-dir -r requirements.txt\r\n");
-		        		}
-		        		break;
-	        		case "java":
-	        			writer.write("FROM openjdk:8\n");
-	        			writer.write("WORKDIR /usr/src/app\n");
+    	Map<Integer, String> result = null;
+    	String output = "[실행결과없음]";
+    	String cmd = "\"docker run --rm -v \" + tpath + \":/usr/src/\" + spath + \"/\" + \" -w /usr/src/\" + spath";
+    	switch(type) {
+    		case "python":
+    			result = dockerService.terminal(cmd + " python:3 python Main.py");
+        		if(result.get(0) == null) {
+        			int key = 0;
+        			for(Integer k : result.keySet()) {
+        				key = k;
+        			}
+        			output = "[error] " + result.get(key) + "\ncode:" + key;
+        		} else {
+        			output = "[실행결과]" + result.get(0) + "\n";
         		}
-        		writer.close();
-        	} catch (IOException e) {
-        		e.printStackTrace();
-        	}        	
-    		containerId = dockerService.build(cpath, tag);
-    	} else {
-    		Map<Integer, String> result = dockerService.terminal(containerId, "docker run -i --rm --name " + tag + " -w /usr/src/myapp python:3 python " + dfile);
-    		String output = result.get(0);
-        	model.put("output", output);
+    			break;
+    		case "java":
+    			result = dockerService.terminal(cmd + " openjdk:8 javac Main.java");
+    			if(result.get(0) == null) {
+    				int key = 0;
+    				for(Integer k : result.keySet()) {
+    					key = k;
+    				}
+    				output = "[error] " + result.get(key) + "\ncode:" + key;
+    			} else {
+        			result = dockerService.terminal(cmd + " openjdk:8 java Main");
+        			if(result.get(0) == null) {
+        				int key = 0;
+        				for(Integer k : result.keySet()) {
+        					key = k;
+        				}
+        				output = "[error] " + result.get(key) + "\ncode:" + key;
+        			} else {
+        				output = "[실행결과]" + result.get(0) + "\n";
+        			}
+    			}
+    			break;
+    		case "c":
+    			result = dockerService.terminal(cmd + " gcc:4.9 gcc -o main main.c");
+    			if(result.get(0) == null) {
+    				int key = 0;
+    				for(Integer k : result.keySet()) {
+    					key = k;
+    				}
+    				output = "[error] " + result.get(key) + "\ncode:" + key;
+    			} else {
+        			result = dockerService.terminal(cmd + " gcc:4.9 ./main");
+        			if(result.get(0) == null) {
+        				int key = 0;
+        				for(Integer k : result.keySet()) {
+        					key = k;
+        				}
+        				output = "[error] " + result.get(key) + "\ncode:" + key;
+        			} else {
+        				output = "[실행결과]" + result.get(0) + "\n";
+        			}
+    			}
+    			break;
     	}
+    	model.put("output", output);
     	return ResponseEntity.ok(model);
     }
 	

@@ -44,7 +44,10 @@ public class DockerService {
 			}
 			result = terminal(cmd);
 			if(result.get(0) == null) {
-				String key = result.keySet().toString();
+				int key = 0;
+				for(Integer k : result.keySet()) {
+					key = k;
+				}
 				throw new Exception(key + ": " + result.get(key));
 			}
 			String id = this.getId(tag);
