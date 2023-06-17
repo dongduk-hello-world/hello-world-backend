@@ -13,6 +13,7 @@ mailSender.properties
 .springBeans
 .sts4-cache
 
+docker
 
 # Created by https://www.gitignore.io/api/git,java,maven,eclipse,windows
 
