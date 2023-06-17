@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,12 +42,23 @@ public class TestController {
 	// 세션에는 최근 N개를 저장해 둠. 별개로 DB와 비교하여 최고점이면 DB insert
     @PostMapping("/{testId}/submits")
     public ResponseEntity<Map<String, Object>> submit (	HttpServletRequest request,
-    														@RequestParam String type,
-    														@RequestParam String code,
-    														@PathVariable long testId, Map<String, Object> model ) {
+														@RequestBody TestSubmitRequest req,
+    													@PathVariable long testId, Map<String, Object> model ) {
+															
+		String type = req.getLanguage();
+		String code = req.getCode();
+
+		System.out.println(">>>>>>>>> code를 제출");
+		System.out.println("testId: " + testId);
+		System.out.println("language: " + type);
+		System.out.println("<code>\n" + code);
+
     	HttpSession session = request.getSession();
     	String submitId = new SimpleDateFormat("yyyyMMdd-HHmmss").format(Calendar.getInstance().getTime());
     	String userId = (String) session.getAttribute("user_id");
+		if(userId == null) {
+			userId = "test";
+		}
     	String path = new ClassPathResource("docker").getPath() + "/";
     	String end = "";
 		List<String> require = new ArrayList<>();
@@ -174,4 +186,22 @@ public class TestController {
 		// 0이면 DB에 있는 최고점. 1 ~ N 이면 세션에 있는 index로 
 		return null;
     }
+}
+
+class TestSubmitRequest {
+	String language;
+	String code;
+	
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 }
