@@ -44,7 +44,6 @@ public class TestController {
     public ResponseEntity<Map<String, Object>> submit (	HttpServletRequest request,
 														@RequestBody TestSubmitRequest req,
     													@PathVariable long testId, Map<String, Object> model ) {
-															
 		String type = req.getLanguage();
 		String code = req.getCode();
 
@@ -54,17 +53,18 @@ public class TestController {
 		System.out.println("<code>\n" + code);
 
     	HttpSession session = request.getSession();
-    	String submitId = new SimpleDateFormat("yyyyMMdd-HHmmss").format(Calendar.getInstance().getTime());
+    	String submitId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     	String userId = (String) session.getAttribute("user_id");
 		if(userId == null) {
 			userId = "test";
 		}
     	String path = new ClassPathResource("docker").getPath() + "/";
     	String end = "";
-		List<String> require = new ArrayList<>();
+		// List<String> require = new ArrayList<>();
     	switch(type) {
     		case "python":
     			end = ".py";
+    			/*
     			for(String c: code.split("\n")) {
     				if(c.startsWith("import") || (c.startsWith("from"))) {
     					require.add(c.split(" ")[1]);
@@ -79,30 +79,37 @@ public class TestController {
     	    	} catch (IOException e) {
     	    		e.printStackTrace();
     	    	}
+    	    	*/
     			break;
     		case "java":
     			end = ".java";
+    			/*
     			for(String c: code.split("\n")) {
     				if(c.startsWith("import")) {
     					require.add(c.split(" ")[1]);
     				}
     			}
+    			*/
     			break;
     		case "c":
     			end = ".c";
+    			/*
     			for(String c: code.split("\n")) {
     				if(c.startsWith("#include")) {
     					require.add(c.split(" ")[1]);
     				}
     			}
+    			*/
     			break;
     		default:
     			break;
     	}
     	String spath = userId + "/" + testId + "/" + submitId;
-    	String tpath = path + "/" + spath;
+    	String tpath = path + spath;
     	String dpath = tpath + "/Main" + end;
+    	File mkdir = new File(tpath);
     	File dfile = new File(dpath);
+    	mkdir.mkdirs();
     	try {
     		BufferedWriter writer = new BufferedWriter(new FileWriter(dfile));
     		writer.write(code);
@@ -111,8 +118,9 @@ public class TestController {
     		e.printStackTrace();
     	}
     	Map<Integer, String> result = null;
+    	result = dockerService.terminal("pwd");
     	String output = "[실행결과없음]";
-    	String cmd = "\"docker run --rm -v \" + tpath + \":/usr/src/\" + spath + \"/\" + \" -w /usr/src/\" + spath";
+    	String cmd = "docker run --rm -v " + result.get(0).replace("\n", "") + "/" + tpath + ":/usr/src/" + spath + "/" + " -w /usr/src/" + spath;
     	switch(type) {
     		case "python":
     			result = dockerService.terminal(cmd + " python:3 python Main.py");

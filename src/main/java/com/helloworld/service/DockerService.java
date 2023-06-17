@@ -103,14 +103,18 @@ public class DockerService {
 			BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String line;
 			StringBuilder sb = new StringBuilder();
-			while((line=stdout.readLine())!=null) {
+			if((line=stdout.readLine()) != null) {
 				sb.append(line + "\n");
+				while((line=stdout.readLine())!=null) {
+					sb.append(line + "\n");
+				}
+				System.out.println("stdout: " + sb.toString());
+			} else {
+				while((line=stderr.readLine())!=null) {
+					sb.append(line + "\n");
+				}
+				System.out.println("stderr: " + sb.toString());
 			}
-			System.out.println("stdout: " + sb.toString());
-			while((line=stderr.readLine())!=null) {
-				sb.append(line + "\n");
-			}
-			System.out.println("stderr: " + sb.toString());
 			String result = sb.toString();
 			res.put(code, result);
 			if(code != 0) {
