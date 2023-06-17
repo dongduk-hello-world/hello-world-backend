@@ -44,6 +44,8 @@ public class UserController {
 		
 		classList.put(1, classInfo);
 		
+		classInfo.clear();
+		
 		classInfo.add("2");
 		classInfo.add("문제해결기법");
 		classInfo.add("한혁");
