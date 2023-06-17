@@ -31,26 +31,26 @@ public class UserController {
     }
 
 	@GetMapping("/{userId}/subjects")
-    public Map<Integer, List<String>> getSubjectList(@PathVariable long userId) {
-		List<String> classInfo = new ArrayList<>();
-		Map<Integer, List<String>> classList = new HashMap<>();
+    public Map<Integer, Map<String, String>> getSubjectList(@PathVariable long userId) {
+		Map<String, String> classInfo = new HashMap<>();
+		Map<Integer, Map<String, String>> classList = new HashMap<>();
 //		List<String> classList = new ArrayList<>();
 		
-		classInfo.add("1");
-		classInfo.add("소프트웨어시스템개발");
-		classInfo.add("박창섭");
-		classInfo.add("2023년 1학기");
-		classInfo.add("1");
+		classInfo.put("classId", "1");
+		classInfo.put("className", "소프트웨어시스템개발");
+		classInfo.put("professor", "박창섭");
+		classInfo.put("period", "2023년 1학기");
+		classInfo.put("divide", "1");
 		
 		classList.put(1, classInfo);
 		
 		classInfo.clear();
 		
-		classInfo.add("2");
-		classInfo.add("문제해결기법");
-		classInfo.add("한혁");
-		classInfo.add("2023년 1학기");
-		classInfo.add("3");
+		classInfo.put("classId", "2");
+		classInfo.put("className", "문제해결기법");
+		classInfo.put("professor", "한혁");
+		classInfo.put("period", "2023년 1학기");
+		classInfo.put("divide", "3");
 		
 		classList.put(2, classInfo);
 		
