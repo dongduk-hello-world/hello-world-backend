@@ -1,6 +1,9 @@
 package com.helloworld.controller;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +31,28 @@ public class UserController {
     }
 
 	@GetMapping("/{userId}/subjects")
-    public List<String> getSubjectList(@PathVariable long userId) {
-		// 해당 user가 수강하고 있는 과목의 리스트를 반환
-		return null;
+    public Map<Integer, List<String>> getSubjectList(@PathVariable long userId) {
+		List<String> classInfo = new ArrayList<>();
+		Map<Integer, List<String>> classList = new HashMap<>();
+//		List<String> classList = new ArrayList<>();
+		
+		classInfo.add("1");
+		classInfo.add("소프트웨어시스템개발");
+		classInfo.add("박창섭");
+		classInfo.add("2023년 1학기");
+		classInfo.add("1");
+		
+		classList.put(1, classInfo);
+		
+		classInfo.add("2");
+		classInfo.add("문제해결기법");
+		classInfo.add("한혁");
+		classInfo.add("2023년 1학기");
+		classInfo.add("3");
+		
+		classList.put(2, classInfo);
+		
+		return classList;
     }
 	
 }
