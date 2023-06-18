@@ -55,9 +55,29 @@ public class ClassController {
     }
 	
 	@GetMapping("/{classId}/assignments")
-	public List<String> getAssignmentList(@PathVariable long classId) { 
+	public List<Map> getAssignmentList(@PathVariable long classId) { 
 		// class에 개설된 assignment list
-		return null;
+		List<Map> assignmentList = new ArrayList<Map>();
+		Map<String, String> assignmentInfo1 = new HashMap<>();
+		Map<String, String> assignmentInfo2 = new HashMap<>();
+		
+		assignmentInfo1.put("assignmentId", "0");
+		assignmentInfo1.put("assignmentName", "중간고사 테스트");
+		assignmentInfo1.put("writer", "박창섭");
+		assignmentInfo1.put("startTime", "2023/02/02 17:30");
+		assignmentInfo1.put("endTime", "2023/02/02 19:30");
+		
+		assignmentList.add(assignmentInfo1);
+		
+		assignmentInfo2.put("assignmentId", "1");
+		assignmentInfo2.put("assignmentName", "기말고사 테스트");
+		assignmentInfo2.put("writer", "박창섭");
+		assignmentInfo2.put("startTime", "2023/06/02 17:30");
+		assignmentInfo2.put("endTime", "2023/06/02 19:30");
+		
+		assignmentList.add(assignmentInfo2);
+		
+		return assignmentList;
     }
 	
 	@GetMapping("/{classId}/students")
