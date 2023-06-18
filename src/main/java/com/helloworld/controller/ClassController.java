@@ -1,6 +1,7 @@
 package com.helloworld.controller;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +61,30 @@ public class ClassController {
     }
 	
 	@GetMapping("/{classId}/students")
-	public List<String> getStudentList(@PathVariable long classId) { 
+	public List<List<String>> getStudentList(@PathVariable long classId) { 
 		// class를 수강하고 있는 student list
-		return null;
+		List<List<String>> studentList = new ArrayList<List<String>>();
+		
+		//임시
+		List<String> student1 = new ArrayList<String>();
+		List<String> student2 = new ArrayList<String>();
+		List<String> student3 = new ArrayList<String>();
+		List<String> student4 = new ArrayList<String>();
+		
+		student1.add("전유영");
+		student1.add("20201015");
+		studentList.add(student1);
+		student2.add("전유영");
+		student2.add("20201012");
+		studentList.add(student2);
+		student3.add("전유영");
+		student3.add("20201013");
+		studentList.add(student3);
+		student4.add("전유영");
+		student4.add("20201014");
+		studentList.add(student4);
+		
+		return studentList;
     }
 	@PostMapping("/{classId}/students/{userId}/{code}")
 	public List<String> join(@PathVariable long classId, @PathVariable long userId, @PathVariable String code) { 
