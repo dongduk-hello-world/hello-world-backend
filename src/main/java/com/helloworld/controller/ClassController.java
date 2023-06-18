@@ -1,6 +1,8 @@
 package com.helloworld.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +30,17 @@ public class ClassController {
     }
 	
 	@GetMapping("/{classId}")
-    public List<String> get(@PathVariable long classId) {
+    public Map<String, String> get(@PathVariable long classId) {
 		// class의 상세 정보
-		return null;
+		Map<String, String> classInfo = new HashMap<>();
+		
+		classInfo.put("classId", "0");
+		classInfo.put("className", "소프트웨어시스템개발");
+		classInfo.put("professor", "박창섭");
+		classInfo.put("period", "2023년 1학기");
+		classInfo.put("divide", "1");
+		
+		return classInfo;
     }
 	@PutMapping("/{classId}")
 	public List<String> update(@PathVariable long classId) {
