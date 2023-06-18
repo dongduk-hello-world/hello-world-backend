@@ -1,6 +1,9 @@
 package com.helloworld.controller;
 
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +31,17 @@ public class ClassController {
     }
 	
 	@GetMapping("/{classId}")
-    public List<String> get(@PathVariable long classId) {
+    public Map<String, String> get(@PathVariable long classId) {
 		// class의 상세 정보
-		return null;
+		Map<String, String> classInfo = new HashMap<>();
+		
+		classInfo.put("classId", "0");
+		classInfo.put("className", "소프트웨어시스템개발");
+		classInfo.put("professor", "박창섭");
+		classInfo.put("period", "2023년 1학기");
+		classInfo.put("divide", "1");
+		
+		return classInfo;
     }
 	@PutMapping("/{classId}")
 	public List<String> update(@PathVariable long classId) {
@@ -44,15 +55,56 @@ public class ClassController {
     }
 	
 	@GetMapping("/{classId}/assignments")
-	public List<String> getAssignmentList(@PathVariable long classId) { 
+	public List<Map> getAssignmentList(@PathVariable long classId) { 
 		// class에 개설된 assignment list
-		return null;
+		List<Map> assignmentList = new ArrayList<Map>();
+		Map<String, String> assignmentInfo1 = new HashMap<>();
+		Map<String, String> assignmentInfo2 = new HashMap<>();
+		
+		assignmentInfo1.put("assignmentId", "0");
+		assignmentInfo1.put("assignmentName", "중간고사 테스트");
+		assignmentInfo1.put("writer", "박창섭");
+		assignmentInfo1.put("startTime", "2023/02/02 17:30");
+		assignmentInfo1.put("endTime", "2023/02/02 19:30");
+		
+		assignmentList.add(assignmentInfo1);
+		
+		assignmentInfo2.put("assignmentId", "1");
+		assignmentInfo2.put("assignmentName", "기말고사 테스트");
+		assignmentInfo2.put("writer", "박창섭");
+		assignmentInfo2.put("startTime", "2023/06/02 17:30");
+		assignmentInfo2.put("endTime", "2023/06/02 19:30");
+		
+		assignmentList.add(assignmentInfo2);
+		
+		return assignmentList;
     }
 	
 	@GetMapping("/{classId}/students")
-	public List<String> getStudentList(@PathVariable long classId) { 
+	public List<List<String>> getStudentList(@PathVariable long classId) { 
 		// class를 수강하고 있는 student list
-		return null;
+		List<List<String>> studentList = new ArrayList<List<String>>();
+		
+		//임시
+		List<String> student1 = new ArrayList<String>();
+		List<String> student2 = new ArrayList<String>();
+		List<String> student3 = new ArrayList<String>();
+		List<String> student4 = new ArrayList<String>();
+		
+		student1.add("전유영");
+		student1.add("20201015");
+		studentList.add(student1);
+		student2.add("전유영");
+		student2.add("20201012");
+		studentList.add(student2);
+		student3.add("전유영");
+		student3.add("20201013");
+		studentList.add(student3);
+		student4.add("전유영");
+		student4.add("20201014");
+		studentList.add(student4);
+		
+		return studentList;
     }
 	@PostMapping("/{classId}/students/{userId}/{code}")
 	public List<String> join(@PathVariable long classId, @PathVariable long userId, @PathVariable String code) { 
