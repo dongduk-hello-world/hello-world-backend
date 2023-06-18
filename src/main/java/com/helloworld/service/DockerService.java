@@ -89,6 +89,10 @@ public class DockerService {
 	}
 	
 	public Map<Integer, String> run(List<String> cmd) {
+		return run(cmd, false);
+	}
+	
+	public Map<Integer, String> run(List<String> cmd, boolean skip) {
 		Map<Integer, String> res = new HashMap<>();
 		int code = 0;
 		
@@ -116,6 +120,9 @@ public class DockerService {
 				System.out.println("stderr: " + sb.toString());
 			}
 			String result = sb.toString();
+			if(skip) {
+				code = 0;
+			}
 			res.put(code, result);
 			if(code != 0) {
 				throw new Exception(result);
