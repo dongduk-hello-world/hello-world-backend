@@ -17,4 +17,22 @@ public class SignUp {
 	
 	@ManyToMany(mappedBy="signUps")
 	private Set<User> users;
+
+	public String getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+
+	public String getLecture_id() {
+		return lecture_id;
+	}
+
+	public void setLecture_id(String lecture_id) {
+		this.lecture_id = lecture_id;
+	}
+	
+	
 }
