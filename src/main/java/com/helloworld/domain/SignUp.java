@@ -16,5 +16,5 @@ public class SignUp {
 	private String lecture_id;
 	
 	@ManyToMany(mappedBy="signUps")
-	private Set<Users> users;
+	private Set<User> users;
 }
