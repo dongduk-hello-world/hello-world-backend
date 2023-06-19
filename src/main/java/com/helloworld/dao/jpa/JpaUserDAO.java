@@ -20,11 +20,11 @@ public class JpaUserDAO implements UserDAO {
 	@PersistenceContext
     private EntityManager em;
 	
-	public User getUser(String user_id) throws DataAccessException {
+	public User getUser(long user_id) throws DataAccessException {
         return em.find(User.class, user_id);         
 	}
 
-	public User getUser(String user_id, String password) 
+	public User getUser(long user_id, String password) 
 			throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
                                 "select u from USERS u "
@@ -50,7 +50,7 @@ public class JpaUserDAO implements UserDAO {
         em.merge(user);
 	}
 
-	public void updatePassword(String user_id, String password) throws DataAccessException {
+	public void updatePassword(long user_id, String password) throws DataAccessException {
 		try {
 			Query query = em.createQuery("update USERS u SET u.password = ?1 WHERE u.user_id = ?2");
 			query.setParameter(1, password);
@@ -62,12 +62,12 @@ public class JpaUserDAO implements UserDAO {
 		}
 	}
 
-	public List<Lecture> getProfessorLectureList(String user_id) throws DataAccessException {
+	public List<Lecture> getProfessorLectureList(long user_id) throws DataAccessException {
 		// 추가
 		return null;
 	}
 
-	public List<Lecture> getStudentLectureList(String user_id) throws DataAccessException {
+	public List<Lecture> getStudentLectureList(long user_id) throws DataAccessException {
 		// 추가
 		return null;
 	}

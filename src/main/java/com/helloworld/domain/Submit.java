@@ -25,7 +25,7 @@ public class Submit implements Serializable, Comparable<Submit> {
 	@Column(name="assignment_id")
 	private long assignmentId;
 	@Column(name="submitor_id")
-	private String submitorId;
+	private long submitorId;
 	
 	@Column(name="language_type")
 	private String languageType;
@@ -85,10 +85,10 @@ public class Submit implements Serializable, Comparable<Submit> {
 	public void setAssignmentId(long assignmentId) {
 		this.assignmentId = assignmentId;
 	}
-	public String getSubmitorId() {
+	public long getSubmitorId() {
 		return submitorId;
 	}
-	public void setSubmitorId(String submitorId) {
+	public void setSubmitorId(long submitorId) {
 		this.submitorId = submitorId;
 	}
 	public String getLanguageType() {

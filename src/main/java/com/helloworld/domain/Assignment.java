@@ -18,10 +18,8 @@ public class Assignment implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="lecture_id")
 	private Lecture lecture;
-
-	@Column
-	private String writer_id;
 	
+	private String writer_id;
 	private String name;
 	private String start_time;
 	private String end_time;
