@@ -1,12 +1,17 @@
 package com.helloworld.service;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,34 +63,127 @@ public class DockerService {
 		return "none";
 	}
 	
-	public String test(String id, String type, String input) {
-		String output = "";
-		Map<Integer, String> result = new HashMap<>();
-		try {
-			switch(type) {
-				case "c":
-					result = terminal("docker exec -i " + id + " /bin/bash -c ", "\"cd ~/test/c && echo -e '" + input + "' >> test.c\"");
-					result = terminal("docker exec -i " + id + " /bin/bash -c ", "\"cd ~/test/c && gcc test.c -o test.o\"");
-					result = terminal("docker exec -i " + id + " /bin/bash -c ", "\"cd ~/test/c && ./test.o\"");
-					output = result.get(0);
-					break;
-				case "java":
-					result = terminal("docker exec -i " + id + " /bin/bash -c 'cd ~/test/java && echo -e '" + input + "' >> test.java'");
-					result = terminal("docker exec -i " + id + " /bin/bash -c 'cd ~/test/java && javac -d Test.java'");
-					result = terminal("docker exec -i " + id + " /bin/bash -c 'cd ~/test/java && java Test.class'");
-					output = result.get(0);
-					break;
-				case "python":
-					result = terminal("docker exec -i " + id + " /bin/bash -c \"rm ~/test/python test.py\"");
-					result = terminal("docker exec -i " + id + " /bin/bash -c \"cd ~/test/python && echo -e '" + input + "' >> test.py\"");
-					result = terminal("docker exec -i " + id + " /bin/bash -c \"cd ~/test/python && python test.py\"");
-					output = result.get(0);
-					break;
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return output;
+	public String test(String type, String code, long testId, long testCaseId, String submitId, String userId) {
+    	String path = new ClassPathResource("docker").getPath() + "/";
+    	String spath = userId + "/" + testId + "/" + submitId + "/" + testCaseId;
+    	String tpath = path + spath;
+    	File main;
+    	File mkdir = new File(tpath);
+    	mkdir.mkdirs();
+    	switch(type) {
+    		case "python":
+    	    	main = new File(tpath + "/Main.py");
+    	    	try {
+    	    		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
+    	    		writer.write("import sys\r\n" + "sys.stdin = open('input.txt')");
+    	    		writer.write(code);
+    	    		writer.close();
+    	    	} catch (IOException e) {
+    	    		e.printStackTrace();
+    	    	}
+    			break;
+    		case "java":
+    	    	main = new File(tpath + "/Main.java");
+    	    	try {
+    	    		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
+    	    		String newCode = "";
+    	    		for(String c: code.split("\n")) {
+    	    			if(c.contains("public static void main")) {
+    	    				newCode += c.replace("{", "") + " throws Exception {\r\n";
+    	    				newCode += "System.setIn(new FileInputStream(\"input.txt\"));\r\n";
+    	    			} else {
+    	    				newCode += c + "\r\n";
+    	    			}
+    	    		}
+    	    		writer.write(newCode);
+    	    		writer.close();
+    	    	} catch (IOException e) {
+    	    		e.printStackTrace();
+    	    	}
+    			break;
+    		case "c":
+    	    	main = new File(tpath + "/Main.c");
+    	    	try {
+    	    		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
+    	    		String newCode ="";
+    	    		for(String c: code.split("\n")) {
+    	    			if(c.contains("main") && c.contains("(")) {
+    	    				newCode += c + "\r\n";
+    	    				newCode += "freopen(\"input.txt\", \"r\", stdin);\r\n";
+    	    			} else {
+    	    				newCode += c + "\r\n";
+    	    			}
+    	    		}
+    	    		writer.write(newCode);
+    	    		writer.close();
+    	    	} catch (IOException e) {
+    	    		e.printStackTrace();
+    	    	}
+    			break;
+    		default:
+    			break;
+    	}
+    	Map<Integer, String> result = null;
+    	result = terminal("pwd");
+    	String output = "[실행결과없음]";
+    	String cmd = "docker run --rm -v " + result.get(0).replace("\n", "") + "/" + tpath + ":/usr/src/" + spath + "/" + " -w /usr/src/" + spath;
+    	switch(type) {
+    		case "python":
+    			result = terminal(cmd + " python:3 python Main.py");
+        		if(result.get(0) == null) {
+        			int key = 0;
+        			for(Integer k : result.keySet()) {
+        				key = k;
+        			}
+        			output = result.get(key);
+        		} else {
+        			output = result.get(0);
+        		}
+    			break;
+    		case "java":
+    			result = terminal(cmd + " openjdk:8 javac Main.java", true);
+    			if(result.get(0) == null) {
+    				int key = 0;
+    				for(Integer k : result.keySet()) {
+    					key = k;
+    				}
+    				output = result.get(key);
+    			} else {
+        			result = terminal(cmd + " openjdk:8 java Main", true);
+        			if(result.get(0) == null) {
+        				int key = 0;
+        				for(Integer k : result.keySet()) {
+        					key = k;
+        				}
+        				output = result.get(key);
+            		} else {
+            			output = result.get(0);
+            		}
+    			}
+    			break;
+    		case "c":
+    			result = terminal(cmd + " gcc:4.9 gcc -o main main.c", true);
+    			if(result.get(0) == null) {
+    				int key = 0;
+    				for(Integer k : result.keySet()) {
+    					key = k;
+    				}
+    				output = result.get(key);
+    			} else {
+        			result = terminal(cmd + " gcc:4.9 ./main", true);
+        			if(result.get(0) == null) {
+        				int key = 0;
+        				for(Integer k : result.keySet()) {
+        					key = k;
+        				}
+        				output = result.get(key);
+            		} else {
+            			output = result.get(0);
+            		}
+    			}
+    			break;
+    	}
+    	return output;
 	}
 	
 	public Map<Integer, String> run(List<String> cmd) {
