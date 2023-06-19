@@ -144,14 +144,18 @@ public class DockerService {
 		return run(cmds);
 	}
 	
-	public Map<Integer, String> terminal(String cmd) {
+	public Map<Integer, String> terminal(String cmd, boolean skip) {
 		String[] split = cmd.split(" ");
 		List<String> cmds = new ArrayList<>();
 		for(String c : split) {
 			cmds.add(c);
 		}
 		System.out.println(cmds);
-		return run(cmds);
+		return run(cmds, skip);
+	}
+	
+	public Map<Integer, String> terminal(String cmd) {
+		return terminal(cmd, false);
 	}
 	
 	public Map<Integer, String> terminal(List<String> cmd) {
