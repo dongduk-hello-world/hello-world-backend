@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,21 +23,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helloworld.domain.Submit;
 import com.helloworld.service.DockerService;
+import com.helloworld.service.SubmitService;
+import com.helloworld.service.TestService;
 
 @RestController
 @RequestMapping("/tests")
 public class TestController {
 	
+	@Autowired TestService testService;
+	@Autowired SubmitService submitService;
 	@Autowired DockerService dockerService;
-	
+
+	// test의 정보 가져오기
 	@GetMapping("/{testId}")
-    public List<String> get(@PathVariable long testId) {
-		// test의 정보 가져오기
-		return null;
+    public ResponseEntity<com.helloworld.domain.Test> get(@PathVariable long testId) {
+		com.helloworld.domain.Test result = testService.getTest(testId);
+		return ResponseEntity.ok(result);
     }
 
 	// 문제 풀이 제출
@@ -60,17 +67,17 @@ public class TestController {
 		}
     	String path = new ClassPathResource("docker").getPath() + "/";
     	String end = "";
-		// List<String> require = new ArrayList<>();
     	switch(type) {
     		case "python":
     			end = ".py";
     			/*
+    			List<String> require = new ArrayList<>();
     			for(String c: code.split("\n")) {
     				if(c.startsWith("import") || (c.startsWith("from"))) {
     					require.add(c.split(" ")[1]);
     				}
     			}
-    	    	String rpath = path + "/" + userId + "/requirements.txt";
+    	    	String rpath = path + userId + "/requirements.txt";
     	    	File rfile = new File(rpath);
     	    	try {
     	    		BufferedWriter writer = new BufferedWriter(new FileWriter(rfile));
@@ -83,23 +90,9 @@ public class TestController {
     			break;
     		case "java":
     			end = ".java";
-    			/*
-    			for(String c: code.split("\n")) {
-    				if(c.startsWith("import")) {
-    					require.add(c.split(" ")[1]);
-    				}
-    			}
-    			*/
     			break;
     		case "c":
     			end = ".c";
-    			/*
-    			for(String c: code.split("\n")) {
-    				if(c.startsWith("#include")) {
-    					require.add(c.split(" ")[1]);
-    				}
-    			}
-    			*/
     			break;
     		default:
     			break;
@@ -135,7 +128,7 @@ public class TestController {
         		}
     			break;
     		case "java":
-    			result = dockerService.terminal(cmd + " openjdk:8 javac Main.java");
+    			result = dockerService.terminal(cmd + " openjdk:8 javac Main.java", true);
     			if(result.get(0) == null) {
     				int key = 0;
     				for(Integer k : result.keySet()) {
@@ -143,7 +136,7 @@ public class TestController {
     				}
     				output = "[error] " + result.get(key) + "\ncode:" + key;
     			} else {
-        			result = dockerService.terminal(cmd + " openjdk:8 java Main");
+        			result = dockerService.terminal(cmd + " openjdk:8 java Main", true);
         			if(result.get(0) == null) {
         				int key = 0;
         				for(Integer k : result.keySet()) {
@@ -156,7 +149,7 @@ public class TestController {
     			}
     			break;
     		case "c":
-    			result = dockerService.terminal(cmd + " gcc:4.9 gcc -o main main.c");
+    			result = dockerService.terminal(cmd + " gcc:4.9 gcc -o main main.c", true);
     			if(result.get(0) == null) {
     				int key = 0;
     				for(Integer k : result.keySet()) {
@@ -164,7 +157,7 @@ public class TestController {
     				}
     				output = "[error] " + result.get(key) + "\ncode:" + key;
     			} else {
-        			result = dockerService.terminal(cmd + " gcc:4.9 ./main");
+        			result = dockerService.terminal(cmd + " gcc:4.9 ./main", true);
         			if(result.get(0) == null) {
         				int key = 0;
         				for(Integer k : result.keySet()) {
@@ -177,22 +170,39 @@ public class TestController {
     			}
     			break;
     	}
+    	// testcase 불러오기
+    	// input 넣고 output 체크하기
+    	
     	model.put("output", output);
     	return ResponseEntity.ok(model);
     }
 	
-	
+	// DB에 있는 최고점 제출 정보 + session에 있는 최근 N개의 제출 정보
 	@GetMapping("/{testId}/submits")
-    public List<String> getSubjectList(@PathVariable long userId) {
-		// DB에 있는 최고점 제출 정보 + session에 있는 최근 N개의 제출 정보
-		return null;
+    public ResponseEntity<Map<Integer, Submit>> getSubjectList(HttpServletRequest request, @PathVariable long testId) {
+    	HttpSession session = request.getSession();
+    	String userId = (String) session.getAttribute("user_id");
+    	List<Submit> submits = new ArrayList<>();
+		List<Submit> ssubmit = (List<Submit>) session.getAttribute("submit_" + testId);
+		List<Submit> dsubmit = submitService.getSubmitListByTestIdAndUserId(testId, userId);
+		submits.addAll(ssubmit);
+		submits.addAll(dsubmit);
+		Collections.sort(submits, Collections.reverseOrder());
+		Map<Integer, Submit> result = new HashMap<>();
+		int index = 0;
+		for(Submit s: submits) {
+			result.put(index++, s);
+		}
+		session.setAttribute("submit_" + testId, result);
+		return ResponseEntity.ok(result);
     }
-	
-	@PostMapping("/{testId}/submits/{index}")
-    public List<String> submit(@PathVariable long testId, @PathVariable int index) {
-		// index에 해당하는 제출 정보의 코드 확인.
-		// 0이면 DB에 있는 최고점. 1 ~ N 이면 세션에 있는 index로 
-		return null;
+
+	// index에 해당하는 제출 정보의 코드 확인.
+	// 0이면 DB에 있는 최고점. 1 ~ N 이면 세션에 있는 index로 
+	@GetMapping("/{testId}/submits/{index}")
+    public ResponseEntity<Submit> submit(HttpServletRequest request, @PathVariable long testId, @PathVariable int index) {
+		Map<Integer, Submit> submitMap = getSubjectList(request, testId).getBody();
+		return ResponseEntity.ok(submitMap.get(index));
     }
 }
 
