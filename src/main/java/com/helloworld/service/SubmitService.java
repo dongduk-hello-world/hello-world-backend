@@ -18,4 +18,7 @@ public class SubmitService {
 	public List<Submit> getSubmitListByTestIdAndUserId(Long testId, String userId) {
 		return submitRepo.findByTestIdAndSubmitorId(testId, userId);
 	}
+	public void insert(Submit submit) {
+		submitRepo.save(submit);
+	}
 }

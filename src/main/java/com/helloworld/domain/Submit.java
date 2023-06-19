@@ -30,11 +30,11 @@ public class Submit implements Serializable, Comparable<Submit> {
 	@Column(name="language_type")
 	private String languageType;
 	@Column(name="run_time")
-	private String runtime;
+	private float runtime;
 	private float score;
 	
 	@OneToOne
-	@JoinColumn(name="file_id", referencedColumnName="code_id")
+	@JoinColumn(name="code_id", referencedColumnName="file_id")
 	private File file;
 	
 	@Transient
@@ -97,10 +97,10 @@ public class Submit implements Serializable, Comparable<Submit> {
 	public void setLanguageType(String languageType) {
 		this.languageType = languageType;
 	}
-	public String getRuntime() {
+	public float getRuntime() {
 		return runtime;
 	}
-	public void setRuntime(String runtime) {
+	public void setRuntime(float runtime) {
 		this.runtime = runtime;
 	}
 	public float getScore() {

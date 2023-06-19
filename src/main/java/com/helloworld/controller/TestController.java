@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.helloworld.domain.Submit;
+import com.helloworld.domain.TestCase;
 import com.helloworld.service.DockerService;
+import com.helloworld.service.FileService;
 import com.helloworld.service.SubmitService;
 import com.helloworld.service.TestService;
 
@@ -34,10 +36,11 @@ import com.helloworld.service.TestService;
 @RequestMapping("/tests")
 public class TestController {
 	
+	@Autowired FileService fileService;
 	@Autowired TestService testService;
 	@Autowired SubmitService submitService;
 	@Autowired DockerService dockerService;
-
+	
 	// test의 정보 가져오기
 	@GetMapping("/{testId}")
     public ResponseEntity<com.helloworld.domain.Test> get(@PathVariable long testId) {
@@ -60,120 +63,82 @@ public class TestController {
 		System.out.println("<code>\n" + code);
 
     	HttpSession session = request.getSession();
+    	Submit submit = new Submit();
     	String submitId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     	String userId = (String) session.getAttribute("user_id");
 		if(userId == null) {
 			userId = "test";
 		}
-    	String path = new ClassPathResource("docker").getPath() + "/";
-    	String end = "";
-    	switch(type) {
-    		case "python":
-    			end = ".py";
-    			/*
-    			List<String> require = new ArrayList<>();
-    			for(String c: code.split("\n")) {
-    				if(c.startsWith("import") || (c.startsWith("from"))) {
-    					require.add(c.split(" ")[1]);
-    				}
-    			}
-    	    	String rpath = path + userId + "/requirements.txt";
-    	    	File rfile = new File(rpath);
-    	    	try {
-    	    		BufferedWriter writer = new BufferedWriter(new FileWriter(rfile));
-    	    		writer.write(code);
-    	    		writer.close();
-    	    	} catch (IOException e) {
-    	    		e.printStackTrace();
-    	    	}
-    	    	*/
-    			break;
-    		case "java":
-    			end = ".java";
-    			break;
-    		case "c":
-    			end = ".c";
-    			break;
-    		default:
-    			break;
-    	}
-    	String spath = userId + "/" + testId + "/" + submitId;
-    	String tpath = path + spath;
-    	String dpath = tpath + "/Main" + end;
-    	File mkdir = new File(tpath);
-    	File dfile = new File(dpath);
-    	mkdir.mkdirs();
+		
+		com.helloworld.domain.Test test = testService.getTest(testId);
+		List<TestCase> testcase = test.getTestCaseList();
+		String path = new ClassPathResource("docker").getPath() + "/" + userId + "/" + testId + "/" + submitId + "/";
+		String error = "";
+		float score = 0;
+
+		long start = System.currentTimeMillis();
+		for(TestCase tc: testcase) {
+			long testCaseId = tc.getTestCaseId();
+			String tpath = path + testCaseId;
+			File input = new File(tpath + "/input.txt");
+			try {
+	    		BufferedWriter writer = new BufferedWriter(new FileWriter(input));
+	    		writer.write(tc.getInput());
+	    		writer.close();
+	    	} catch (IOException e) {
+	    		e.printStackTrace();
+	    	}
+			String output = dockerService.test(type, code, testId, testCaseId, submitId, userId);		
+			if(output.equals(tc.getOutput())) {
+				score += test.getScore() / testcase.size();
+			}
+			if(output.contains("error")) {
+				error += output + "\n";
+			}
+		}
+		long runTime = System.currentTimeMillis() - start;
+		
+		File main = null;
+		switch(type) {
+			case "python":
+		    	main = new File(path + "Main.py");
+				break;
+			case "java":
+		    	main = new File(path + "Main.java");
+				break;
+			case "c":
+		    	main = new File(path + "Main.c");
+				break;
+			default:
+				break;
+		}
     	try {
-    		BufferedWriter writer = new BufferedWriter(new FileWriter(dfile));
+    		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
     		writer.write(code);
     		writer.close();
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
-    	Map<Integer, String> result = null;
-    	result = dockerService.terminal("pwd");
-    	String output = "[실행결과없음]";
-    	String cmd = "docker run --rm -v " + result.get(0).replace("\n", "") + "/" + tpath + ":/usr/src/" + spath + "/" + " -w /usr/src/" + spath;
-    	switch(type) {
-    		case "python":
-    			result = dockerService.terminal(cmd + " python:3 python Main.py");
-        		if(result.get(0) == null) {
-        			int key = 0;
-        			for(Integer k : result.keySet()) {
-        				key = k;
-        			}
-        			output = "[error] " + result.get(key) + "\ncode:" + key;
-        		} else {
-        			output = "[실행결과]" + result.get(0) + "\n";
-        		}
-    			break;
-    		case "java":
-    			result = dockerService.terminal(cmd + " openjdk:8 javac Main.java", true);
-    			if(result.get(0) == null) {
-    				int key = 0;
-    				for(Integer k : result.keySet()) {
-    					key = k;
-    				}
-    				output = "[error] " + result.get(key) + "\ncode:" + key;
-    			} else {
-        			result = dockerService.terminal(cmd + " openjdk:8 java Main", true);
-        			if(result.get(0) == null) {
-        				int key = 0;
-        				for(Integer k : result.keySet()) {
-        					key = k;
-        				}
-        				output = "[error] " + result.get(key) + "\ncode:" + key;
-        			} else {
-        				output = "[실행결과]" + result.get(0) + "\n";
-        			}
-    			}
-    			break;
-    		case "c":
-    			result = dockerService.terminal(cmd + " gcc:4.9 gcc -o main main.c", true);
-    			if(result.get(0) == null) {
-    				int key = 0;
-    				for(Integer k : result.keySet()) {
-    					key = k;
-    				}
-    				output = "[error] " + result.get(key) + "\ncode:" + key;
-    			} else {
-        			result = dockerService.terminal(cmd + " gcc:4.9 ./main", true);
-        			if(result.get(0) == null) {
-        				int key = 0;
-        				for(Integer k : result.keySet()) {
-        					key = k;
-        				}
-        				output = "[error] " + result.get(key) + "\ncode:" + key;
-        			} else {
-        				output = "[실행결과]" + result.get(0) + "\n";
-        			}
-    			}
-    			break;
-    	}
-    	// testcase 불러오기
-    	// input 넣고 output 체크하기
-    	
-    	model.put("output", output);
+		
+		com.helloworld.domain.File codeFile = new com.helloworld.domain.File();
+		codeFile.setName(main.getName());
+		codeFile.setPath(main.getPath());
+		long fileId = fileService.insert(codeFile);
+		codeFile.setFileId(fileId);
+		
+		submit.setSubmitId(Long.parseLong(submitId));
+		submit.setSubmitorId(userId);
+		submit.setAssignmentId(test.getAssignmentId());
+		submit.setTestId(testId);
+		submit.setLanguageType(type);
+		submit.setRuntime(runTime);
+		submit.setScore(score);
+		submit.setFile(codeFile);
+		submitService.insert(submit);
+		
+    	model.put("error", error);
+    	model.put("score", score);
+    	model.put("code", code);
     	return ResponseEntity.ok(model);
     }
 	
