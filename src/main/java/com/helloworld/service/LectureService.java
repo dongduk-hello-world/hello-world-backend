@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.helloworld.dao.LectureDAO;
 import com.helloworld.domain.Lecture;
+import com.helloworld.domain.SignUp;
 
 @Service
 public class LectureService {
@@ -26,8 +27,14 @@ public class LectureService {
 		lectureDao.deleteLecture(lecture);
 	}
 	
+	// 강의 수강
 	public void signUpLecture(String user_id, long lecture_id) {
 		lectureDao.signUpLecture(lecture_id, lecture_id);
+	}
+	
+	// 강의 탈퇴
+	public void leaveLecture(SignUp signup) {
+		lectureDao.leaveLecture(signup);
 	}
 	
 	public List<Lecture> findLectureByName(String name) {

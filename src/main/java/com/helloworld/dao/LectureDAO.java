@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 
 import com.helloworld.domain.Lecture;
+import com.helloworld.domain.SignUp;
 
 
 public interface LectureDAO {
@@ -19,4 +20,6 @@ public interface LectureDAO {
 	List<Lecture> getLectureByName(String name) throws DataAccessException;
 
 	public void signUpLecture(long lecture_id, long user_id) throws DataAccessException;
+	
+	public void leaveLecture(SignUp signup) throws DataAccessException;
 }

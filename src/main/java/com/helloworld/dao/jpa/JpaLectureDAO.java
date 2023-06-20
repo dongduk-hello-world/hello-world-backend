@@ -60,4 +60,8 @@ public class JpaLectureDAO implements LectureDAO {
         return lectures;
 	}
 
+	public void leaveLecture(SignUp signup) throws DataAccessException {
+		em.remove(signup);
+	}
+
 }
