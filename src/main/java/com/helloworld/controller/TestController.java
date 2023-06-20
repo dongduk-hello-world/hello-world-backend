@@ -4,10 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +18,18 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.helloworld.domain.Submit;
+import com.helloworld.domain.Test;
 import com.helloworld.domain.TestCase;
 import com.helloworld.service.DockerService;
 import com.helloworld.service.FileService;
@@ -43,17 +47,28 @@ public class TestController {
 	
 	// test의 정보 가져오기
 	@GetMapping("/{testId}")
-    public ResponseEntity<com.helloworld.domain.Test> get(@PathVariable long testId) {
-		com.helloworld.domain.Test result = testService.getTest(testId);
-		return ResponseEntity.ok(result);
+    public ResponseEntity<TestResponseByTest> get(@PathVariable long testId) {
+		com.helloworld.domain.Test test = testService.getTest(testId);
+		TestResponseByTest resultTest = new TestResponseByTest();
+		resultTest.setName(test.getName());
+		resultTest.setDescription(test.getDescription());
+		resultTest.setScore(test.getScore());
+		List<TestCaseResponseByTest> resultTestCase = new ArrayList<>();
+		for(TestCase tc: test.getTestCaseList()) {
+			TestCaseResponseByTest testcase = new TestCaseResponseByTest();
+			testcase.setInput(tc.getInput());
+			testcase.setOutput(tc.getOutput());
+			resultTestCase.add(testcase);
+		}
+		resultTest.setTestcases(resultTestCase);
+		return ResponseEntity.ok(resultTest);
     }
 
 	// 문제 풀이 제출
 	// 세션에는 최근 N개를 저장해 둠. 별개로 DB와 비교하여 최고점이면 DB insert
     @PostMapping("/{testId}/submits")
-    public ResponseEntity<Map<String, Object>> submit (	HttpServletRequest request,
-														@RequestBody TestSubmitRequest req,
-    													@PathVariable long testId, Map<String, Object> model ) {
+    @ResponseStatus(HttpStatus.OK)
+    public void submit(HttpServletRequest request, @RequestBody TestSubmitRequest req, @PathVariable long testId) {
 		String type = req.getLanguage();
 		String code = req.getCode();
 
@@ -65,7 +80,7 @@ public class TestController {
     	HttpSession session = request.getSession();
     	Submit submit = new Submit();
     	String submitId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
-    	String userId = (String) session.getAttribute("email");
+    	String userId = (String) session.getAttribute("uid");
 		if(userId == null) {
 			userId = "test";
 		}
@@ -93,13 +108,14 @@ public class TestController {
 			if(output.equals(tc.getOutput())) {
 				score += test.getScore() / testcase.size();
 			}
-			if(output.contains("error")) {
-				error += output + "\n";
+			if(error.isEmpty() && (output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION"))) {
+				error = output;
 			}
 		}
 		long runTime = System.currentTimeMillis() - start;
 		
 		File main = null;
+		long fileSize = 0;
 		switch(type) {
 			case "python":
 		    	main = new File(path + "Main.py");
@@ -117,59 +133,213 @@ public class TestController {
     		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
     		writer.write(code);
     		writer.close();
+			fileSize = Files.size(Paths.get(main.getPath()));
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
+
+    	String sessionId = "test#" + testId;
+		Map<Integer, TestSubmitSession> data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		TestSubmitSession ts = new TestSubmitSession();
+		ts.setSubmitTime(submitId);
+		ts.setRunTime(runTime);
+		ts.setCode(code);
+		ts.setLanguage(type);
+		ts.setErrorMsg(error);
+		ts.setFileSize(fileSize);
+		ts.setScore(score);
 		
-		com.helloworld.domain.File codeFile = new com.helloworld.domain.File();
-		codeFile.setName(main.getName());
-		codeFile.setPath(main.getPath());
-		long fileId = fileService.insert(codeFile);
-		codeFile.setFileId(fileId);
+		boolean isTop = false;
+		if(data == null) {
+			data = new HashMap<>();
+			isTop = true;
+		} else {
+			if(data.get(0).getScore() <= score) {
+				isTop = true;
+			}
+			int idx = data.size()-1;
+			if(idx >= 4) {
+				for(; idx >= 0; idx--) {
+					if(data.get(idx).getScore() > score)
+						break;
+				}
+				for(int i = 4; i > idx; i--) {
+					if(data.get(i-1) != null) {
+						data.put(i, data.get(i-1));
+					}
+				}
+				if(idx != data.size()-1) {
+					data.put(idx, ts);
+					session.setAttribute(sessionId, data);
+				}
+			} else {
+				data.put(idx+1, ts);
+				session.setAttribute(sessionId, data);
+			}
+		}
 		
-		submit.setSubmitId(Long.parseLong(submitId));
-		submit.setSubmitorId(seqId);
-		submit.setAssignmentId(test.getAssignmentId());
-		submit.setTestId(testId);
-		submit.setLanguageType(type);
-		submit.setRuntime(runTime);
-		submit.setScore(score);
-		submit.setFile(codeFile);
-		submitService.insert(submit);
-		
-    	model.put("error", error);
-    	model.put("score", score);
-    	model.put("code", code);
-    	return ResponseEntity.ok(model);
+		if(isTop) {
+			com.helloworld.domain.File codeFile = new com.helloworld.domain.File();
+			codeFile.setName(main.getName());
+			codeFile.setPath(main.getPath());
+			long fileId = fileService.insert(codeFile);
+			codeFile.setFileId(fileId);
+			
+			submit.setSubmitId(Long.parseLong(submitId));
+			submit.setSubmitorId(seqId);
+			submit.setAssignmentId(test.getAssignmentId());
+			submit.setTestId(testId);
+			submit.setLanguageType(type);
+			submit.setRuntime(runTime);
+			submit.setScore(score);
+			submit.setFile(codeFile);
+			submitService.insert(submit);
+		}
     }
 	
 	// DB에 있는 최고점 제출 정보 + session에 있는 최근 N개의 제출 정보
 	@GetMapping("/{testId}/submits")
-    public ResponseEntity<Map<Integer, Submit>> getSubjectList(HttpServletRequest request, @PathVariable long testId) {
+    public ResponseEntity<Map<String, Object>> getSubjectList(HttpServletRequest request, @PathVariable long testId, Map<String, Object> model) {
     	HttpSession session = request.getSession();
-    	long userId = (long) session.getAttribute("user_id");
-    	List<Submit> submits = new ArrayList<>();
-		List<Submit> ssubmit = (List<Submit>) session.getAttribute("submit_" + testId);
-		List<Submit> dsubmit = submitService.getSubmitListByTestIdAndUserId(testId, userId);
-		submits.addAll(ssubmit);
-		submits.addAll(dsubmit);
-		Collections.sort(submits, Collections.reverseOrder());
-		Map<Integer, Submit> result = new HashMap<>();
-		int index = 0;
-		for(Submit s: submits) {
-			result.put(index++, s);
+    	String sessionId = "test#" + testId;
+    	Test test = testService.getTest(testId);
+		Map<Integer, TestSubmitSession> data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		List<TestSubmitSession> submits = new ArrayList<>();
+		HighScoreResponse highScore = new HighScoreResponse();
+		
+		if(data != null && data.size() > 0) {
+			for(int i = 1; i < 5; i++) {
+				if(data.get(i) == null) {
+					break;
+				}
+				submits.add(data.get(i));
+			}
+			TestSubmitSession top = data.get(0);
+			CodeResponse code = new CodeResponse();
+			code.setCode(top.getCode());
+			code.setError(top.getErrorMsg());
+			code.setLanguage(top.getLanguage());
+			highScore.setScore(top.getScore() + "/" + test.getScore());
+			highScore.setCode(code);
 		}
-		session.setAttribute("submit_" + testId, result);
-		return ResponseEntity.ok(result);
+		
+		model.put("highScore", highScore);
+		model.put("submits", submits);
+		return ResponseEntity.ok(model);
     }
 
 	// index에 해당하는 제출 정보의 코드 확인.
 	// 0이면 DB에 있는 최고점. 1 ~ N 이면 세션에 있는 index로 
 	@GetMapping("/{testId}/submits/{index}")
-    public ResponseEntity<Submit> submit(HttpServletRequest request, @PathVariable long testId, @PathVariable int index) {
-		Map<Integer, Submit> submitMap = getSubjectList(request, testId).getBody();
-		return ResponseEntity.ok(submitMap.get(index));
+    public ResponseEntity<CodeResponse> submit(HttpServletRequest request, @PathVariable long testId, @PathVariable int index) {
+		HttpSession session = request.getSession();
+		String sessionId = "test#" + testId;
+		Map<Integer, TestSubmitSession> data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		CodeResponse response = new CodeResponse();
+		if(data != null && data.get(index) != null) {
+			TestSubmitSession result = data.get(index);
+			response.setCode(result.getCode());
+			response.setError(result.getErrorMsg());
+			response.setLanguage(result.getLanguage());
+		}
+		return ResponseEntity.ok(response);
     }
+}
+
+class HighScoreResponse {
+	private String score;
+	private CodeResponse code;
+	
+	public HighScoreResponse() {}
+	
+	public String getScore() {
+		return score;
+	}
+	public void setScore(String score) {
+		this.score = score;
+	}
+	public CodeResponse getCode() {
+		return code;
+	}
+	public void setCode(CodeResponse code) {
+		this.code = code;
+	}
+}
+class CodeResponse {
+	private String language, code, error;
+
+	public CodeResponse() {}
+	
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getError() {
+		return error;
+	}
+	public void setError(String error) {
+		this.error = error;
+	}
+}
+
+class TestResponseByTest {
+	private String name, description;
+	private float score;
+	private List<TestCaseResponseByTest> testcases;
+	
+	public TestResponseByTest() {}
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public float getScore() {
+		return score;
+	}
+	public void setScore(float score) {
+		this.score = score;
+	}
+	public List<TestCaseResponseByTest> getTestcases() {
+		return testcases;
+	}
+	public void setTestcases(List<TestCaseResponseByTest> testcases) {
+		this.testcases = testcases;
+	}
+}
+
+class TestCaseResponseByTest {
+	private String input, output;
+
+	public TestCaseResponseByTest() {}
+	
+	public String getInput() {
+		return input;
+	}
+	public void setInput(String input) {
+		this.input = input;
+	}
+	public String getOutput() {
+		return output;
+	}
+	public void setOutput(String output) {
+		this.output = output;
+	}
 }
 
 class TestSubmitRequest {
@@ -181,6 +351,57 @@ class TestSubmitRequest {
 	}
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+}
+
+class TestSubmitSession {
+	private long runTime;
+	private float fileSize, score;
+	private String submitTime, language, errorMsg, code;
+	
+	public TestSubmitSession() {}
+	
+	public String getSubmitTime() {
+		return submitTime;
+	}
+	public void setSubmitTime(String submitTime) {
+		this.submitTime = submitTime;
+	}
+	public long getRunTime() {
+		return runTime;
+	}
+	public void setRunTime(long runTime) {
+		this.runTime = runTime;
+	}
+	public float getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(float fileSize) {
+		this.fileSize = fileSize;
+	}
+	public float getScore() {
+		return score;
+	}
+	public void setScore(float score) {
+		this.score = score;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
 	}
 	public String getCode() {
 		return code;

@@ -2,6 +2,7 @@ package com.helloworld.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.helloworld.dao.jpa.JpaAssignmentDAO;
 import com.helloworld.dao.jpa.JpaUserDAO;
 import com.helloworld.domain.Assignment;
@@ -45,6 +49,7 @@ public class AssignmentController {
 	// assignment 등록
 	@Transactional
 	@PostMapping
+    @ResponseStatus(HttpStatus.OK)
 	public void insert(HttpServletRequest request, @RequestBody AssignmentRequest req) {
 		HttpSession session = request.getSession();
 		long userId = (long) session.getAttribute("user_id");
@@ -53,13 +58,13 @@ public class AssignmentController {
 		assignment.setLecture_id(req.getClassId());
 		assignment.setName(req.getName());
 		assignment.setWriter_id(userId);
-		assignment.setStart_time(req.getStartTime());
-		assignment.setTest_time(req.getTestTime());
-		assignment.setEnd_time(req.getEndTime());
+		assignment.setStart_time(req.getStart_time());
+		assignment.setTest_time(req.getTest_time());
+		assignment.setEnd_time(req.getEnd_time());
 		long assignmentId = assignmentDAO.createAssignment(assignment);
 		
-		List<TestRequest> testReqs = req.getTests();
-		for(TestRequest testReq: testReqs) {
+		List<TestRequestByAssignment> testReqs = req.getTests();
+		for(TestRequestByAssignment testReq: testReqs) {
 			Test test = new Test();
 			test.setAssignmentId(assignmentId);
 			test.setName(testReq.getName());
@@ -68,8 +73,8 @@ public class AssignmentController {
 			test.setWriterId(userId);
 			long testId = testService.insert(test);
 			
-			List<TestCaseRequest> testcaseReqs = testReq.getTestcases();
-			for(TestCaseRequest testcaseReq: testcaseReqs) {
+			List<TestCaseRequestByAssignment> testcaseReqs = testReq.getTestcases();
+			for(TestCaseRequestByAssignment testcaseReq: testcaseReqs) {
 				TestCase testcase = new TestCase();
 				testcase.setTestId(testId);
 				testcase.setInput(testcaseReq.getInput());
@@ -90,19 +95,20 @@ public class AssignmentController {
 	// assignment 정보 수정
 	@Transactional
 	@PutMapping("/{assignmentId}")
+    @ResponseStatus(HttpStatus.OK)
 	public void update(@RequestBody AssignmentRequest req, @PathVariable long assignmentId) {
 		Assignment assignment = assignmentDAO.getAssignment(assignmentId);
 		assignment.setLecture_id(req.getClassId());
 		assignment.setName(req.getName());
-		assignment.setStart_time(req.getStartTime());
-		assignment.setTest_time(req.getTestTime());
-		assignment.setEnd_time(req.getEndTime());
+		assignment.setStart_time(req.getStart_time());
+		assignment.setTest_time(req.getTest_time());
+		assignment.setEnd_time(req.getEnd_time());
 		assignmentDAO.updateAssignment(assignment);
 
-		List<TestRequest> testReqs = req.getTests();
+		List<TestRequestByAssignment> testReqs = req.getTests();
 		List<Test> tests = testService.getTestListByAssignmentId(assignment.getAssignment_id());
 		int index = 0;
-		for(TestRequest testReq: testReqs) {
+		for(TestRequestByAssignment testReq: testReqs) {
 			Test test = tests.get(index++);
 			if(index >= testReqs.size() || index >= tests.size()) {
 				break;
@@ -112,8 +118,8 @@ public class AssignmentController {
 			test.setScore(testReq.getScore());
 			testService.update(test);
 			
-			List<TestCaseRequest> testcaseReqs = testReq.getTestcases();
-			for(TestCaseRequest testcaseReq: testcaseReqs) {
+			List<TestCaseRequestByAssignment> testcaseReqs = testReq.getTestcases();
+			for(TestCaseRequestByAssignment testcaseReq: testcaseReqs) {
 				TestCase testcase = new TestCase();
 				testcase.setTestId(test.getTestId());
 				testcase.setInput(testcaseReq.getInput());
@@ -125,6 +131,7 @@ public class AssignmentController {
 
 	// assignment 삭제
 	@DeleteMapping("/{assignmentId}")
+    @ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable long assignmentId) {
 		Assignment data = assignmentDAO.getAssignment(assignmentId);
 		List<Test> tests = testService.getTestListByAssignmentId(assignmentId);
@@ -164,12 +171,12 @@ public class AssignmentController {
 			res.setStudentName(u.getName());
 			res.setStudentNumber(u.getEmail().split("@")[0]);
 			res.setScore(res.getScore() + s.getScore());
-			List<TestResponse> testResponses = res.getTestList();
+			List<TestResponseByAssignment> testResponses = res.getTestList();
 			if(testResponses == null) {
 				testResponses = new ArrayList<>();
 			}
 			Test test = testService.getTest(s.getTestId());
-			TestResponse testResponse = new TestResponse();
+			TestResponseByAssignment testResponse = new TestResponseByAssignment();
 			testResponse.setTestId(test.getTestId());
 			testResponse.setTestName(test.getName());
 			testResponse.setScore(s.getScore());
@@ -182,8 +189,8 @@ public class AssignmentController {
 		for(long key: resMap.keySet()) {
 			if(totalStudentNum == 0) {
 				ResultAllResponse res = resMap.get(key);
-				List<TestResponse> testList = res.getTestList();
-				for(TestResponse t: testList) {
+				List<TestResponseByAssignment> testList = res.getTestList();
+				for(TestResponseByAssignment t: testList) {
 					totalScore += t.getMaxScore();
 				}
 			}
@@ -200,36 +207,38 @@ public class AssignmentController {
 	// 시험 최종 제출 완료 후 할 일을 이 곳에 작성
 	// ex. session 초기화	
 	@PostMapping("/{assignmentId}/results/{userId}")
+    @ResponseStatus(HttpStatus.OK)
 	public void submit(HttpServletRequest request, @PathVariable long assignmentId, @PathVariable long userId, SessionStatus status) {
 		HttpSession session = request.getSession();
 		String email = (String) session.getAttribute("email");
 		status.setComplete();
 		session.setAttribute("user_id", userId);
 		session.setAttribute("email", email);
+		session.setAttribute("uid", email.split("@")[0]);
 	}
 	
 	// 학생 한 명의 상세 결과를 조회
 	@GetMapping("/{assignmentId}/results/{userId}")
 	public ResponseEntity<Map<String, Object>> getResult(@PathVariable long assignmentId, @PathVariable long userId, Map<String, Object> model) {
-		Map<Long, TestResponse> testMap = new HashMap<>();
+		Map<Long, TestResponseByAssignment> testMap = new HashMap<>();
 		List<Submit> submits = submitService.getSubmitListByAssignmentIdAndUserId(assignmentId, userId);
 		List<Test> tests = testService.getTestListByAssignmentId(assignmentId);
 		float score = 0;
 		float maxScore = 0;
 		for(Submit submit: submits) {
-			TestResponse testRes = new TestResponse();
+			TestResponseByAssignment testRes = new TestResponseByAssignment();
 			score += submit.getScore();
 			testRes.setScore(submit.getScore());
 			testMap.put(submit.getTestId(), testRes);
 		}
 		for(Test test: tests) {
-			TestResponse testRes = testMap.get(test.getTestId());
+			TestResponseByAssignment testRes = testMap.get(test.getTestId());
 			maxScore += test.getScore();
 			testRes.setMaxScore(test.getScore());
 			testRes.setTestName(test.getName());
 			testMap.put(test.getTestId(), testRes);
 		}
-		List<TestResponse> list = new ArrayList<>(testMap.values());
+		List<TestResponseByAssignment> list = new ArrayList<>(testMap.values());
 		model.put("totalScore", maxScore);
 		model.put("score", score);
 		model.put("tests", list);
@@ -247,11 +256,11 @@ public class AssignmentController {
 	}
 }
 
-class ResultStudentResponse {
+class Assignment_ResultStudentResponse {
 	private float score, totalScore;
-	private List<TestResponse> tests;
+	private List<TestResponseByAssignment> tests;
 	
-	public ResultStudentResponse() {}
+	public Assignment_ResultStudentResponse() {}
 	
 	public float getScore() {
 		return score;
@@ -265,10 +274,10 @@ class ResultStudentResponse {
 	public void setTotalScore(float totalScore) {
 		this.totalScore = totalScore;
 	}
-	public List<TestResponse> getTests() {
+	public List<TestResponseByAssignment> getTests() {
 		return tests;
 	}
-	public void setTests(List<TestResponse> tests) {
+	public void setTests(List<TestResponseByAssignment> tests) {
 		this.tests = tests;
 	}
 }
@@ -277,7 +286,7 @@ class ResultAllResponse {
 	private long studentId;
 	private String studentName, studentNumber;
 	private float score;
-	private List<TestResponse> testList;
+	private List<TestResponseByAssignment> testList;
 	
 	public ResultAllResponse() {}
 	
@@ -305,20 +314,20 @@ class ResultAllResponse {
 	public void setScore(float score) {
 		this.score = score;
 	}
-	public List<TestResponse> getTestList() {
+	public List<TestResponseByAssignment> getTestList() {
 		return testList;
 	}
-	public void setTestList(List<TestResponse> testList) {
+	public void setTestList(List<TestResponseByAssignment> testList) {
 		this.testList = testList;
 	}
 }
 
-class TestResponse {
+class TestResponseByAssignment {
 	private long testId;
 	private String testName, code;
 	private float score, maxScore;
 	
-	public TestResponse() {}
+	public TestResponseByAssignment() {}
 	
 	public long getTestId() {
 		return testId;
@@ -354,8 +363,13 @@ class TestResponse {
 
 class AssignmentRequest {
 	private String classId, name;
-	private String startTime, endTime, testTime;
-	private List<TestRequest> tests;
+	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
+	private Date start_time;
+	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
+	private Date end_time;
+	@JsonFormat(pattern="HH:mm", timezone="GMT+9")
+	private Date test_time;
+	private List<TestRequestByAssignment> tests;
 	
 	public AssignmentRequest() {}
 	
@@ -371,37 +385,37 @@ class AssignmentRequest {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getStartTime() {
-		return startTime;
+	public Date getStart_time() {
+		return start_time;
 	}
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
+	public void setStart_time(Date start_time) {
+		this.start_time = start_time;
 	}
-	public String getEndTime() {
-		return endTime;
+	public Date getEnd_time() {
+		return end_time;
 	}
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
+	public void setEnd_time(Date end_time) {
+		this.end_time = end_time;
 	}
-	public String getTestTime() {
-		return testTime;
+	public Date getTest_time() {
+		return test_time;
 	}
-	public void setTestTime(String testTime) {
-		this.testTime = testTime;
+	public void setTest_time(Date test_time) {
+		this.test_time = test_time;
 	}
-	public List<TestRequest> getTests() {
+	public List<TestRequestByAssignment> getTests() {
 		return tests;
 	}
-	public void setTests(List<TestRequest> tests) {
+	public void setTests(List<TestRequestByAssignment> tests) {
 		this.tests = tests;
 	}
 }
 
-class TestRequest {
+class TestRequestByAssignment {
 	private String name, description, score;
-	private List<TestCaseRequest> testcases;
+	private List<TestCaseRequestByAssignment> testcases;
 	
-	public TestRequest() {}
+	public TestRequestByAssignment() {}
 	
 	public String getName() {
 		return name;
@@ -421,18 +435,18 @@ class TestRequest {
 	public void setScore(String score) {
 		this.score = score;
 	}
-	public List<TestCaseRequest> getTestcases() {
+	public List<TestCaseRequestByAssignment> getTestcases() {
 		return testcases;
 	}
-	public void setTestcases(List<TestCaseRequest> testcases) {
+	public void setTestcases(List<TestCaseRequestByAssignment> testcases) {
 		this.testcases = testcases;
 	}	
 }
 
-class TestCaseRequest {
+class TestCaseRequestByAssignment {
 	private String input, output;
 	
-	public TestCaseRequest() {}
+	public TestCaseRequestByAssignment() {}
 	
 	public String getInput() {
 		return input;

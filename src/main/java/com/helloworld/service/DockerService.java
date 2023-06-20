@@ -262,26 +262,4 @@ public class DockerService {
 		System.out.println(cmds);
 		return run(cmds);
 	}
-	
-	public Map<Integer, String> exec(String id, List<String> cmd) {
-		List<String> cmds = new ArrayList<>();
-		cmds.add("docker");
-		cmds.add("exec");
-		cmds.add("-i");
-		cmds.add(id);
-		cmds.addAll(cmd);
-		return terminal(cmds);
-	}
-	
-	public Map<Integer, String> exec(String id, String[] cmd) {
-		List<String> cmds = new ArrayList<>();
-		cmds.add("docker");
-		cmds.add("exec");
-		cmds.add("-i");
-		cmds.add(id);
-		for(String c: cmd) {
-			cmds.add(c);
-		}
-		return terminal(cmds);
-	}
 }
