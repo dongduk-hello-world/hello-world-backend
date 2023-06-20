@@ -18,8 +18,10 @@ public class JpaAssignmentDAO implements AssignmentDAO {
 	@PersistenceContext
     private EntityManager em;
 	
-	public void createAssignment(Assignment assignment) throws DataAccessException {
+	public long createAssignment(Assignment assignment) throws DataAccessException {
         em.persist(assignment);
+        Assignment result = em.find(Assignment.class, assignment);
+        return result.getAssignment_id();
 	}
 
 	public void updateAssignment(Assignment assignment) throws DataAccessException {

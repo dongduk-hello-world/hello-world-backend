@@ -45,15 +45,37 @@ public class AssignmentController {
 	// assignment 등록
 	@Transactional
 	@PostMapping
-	public void insert(@RequestBody AssignmentRequest req) {
-		assignmentDAO.createAssignment(req.getAssignment());
-		List<Test> tests = req.getTests();
-		for(Test test: tests) {
-			List<TestCase> testcases = test.getTestCaseList();
-			for(TestCase testcase: testcases) {
+	public void insert(HttpServletRequest request, @RequestBody AssignmentRequest req) {
+		HttpSession session = request.getSession();
+		long userId = (long) session.getAttribute("user_id");
+		
+		Assignment assignment = new Assignment();
+		assignment.setLecture_id(req.getClassId());
+		assignment.setName(req.getName());
+		assignment.setWriter_id(userId);
+		assignment.setStart_time(req.getStartTime());
+		assignment.setTest_time(req.getTestTime());
+		assignment.setEnd_time(req.getEndTime());
+		long assignmentId = assignmentDAO.createAssignment(assignment);
+		
+		List<TestRequest> testReqs = req.getTests();
+		for(TestRequest testReq: testReqs) {
+			Test test = new Test();
+			test.setAssignmentId(assignmentId);
+			test.setName(testReq.getName());
+			test.setDescription(testReq.getDescription());
+			test.setScore(testReq.getScore());
+			test.setWriterId(userId);
+			long testId = testService.insert(test);
+			
+			List<TestCaseRequest> testcaseReqs = testReq.getTestcases();
+			for(TestCaseRequest testcaseReq: testcaseReqs) {
+				TestCase testcase = new TestCase();
+				testcase.setTestId(testId);
+				testcase.setInput(testcaseReq.getInput());
+				testcase.setOutput(testcaseReq.getOutput());
 				testService.insert(testcase);
 			}
-			testService.insert(test);
 		}
     }
 	
@@ -69,14 +91,35 @@ public class AssignmentController {
 	@Transactional
 	@PutMapping("/{assignmentId}")
 	public void update(@RequestBody AssignmentRequest req, @PathVariable long assignmentId) {
-		assignmentDAO.updateAssignment(req.getAssignment());
-		List<Test> tests = req.getTests();
-		for(Test test: tests) {
-			List<TestCase> testcases = test.getTestCaseList();
-			for(TestCase testcase: testcases) {
+		Assignment assignment = assignmentDAO.getAssignment(assignmentId);
+		assignment.setLecture_id(req.getClassId());
+		assignment.setName(req.getName());
+		assignment.setStart_time(req.getStartTime());
+		assignment.setTest_time(req.getTestTime());
+		assignment.setEnd_time(req.getEndTime());
+		assignmentDAO.updateAssignment(assignment);
+
+		List<TestRequest> testReqs = req.getTests();
+		List<Test> tests = testService.getTestListByAssignmentId(assignment.getAssignment_id());
+		int index = 0;
+		for(TestRequest testReq: testReqs) {
+			Test test = tests.get(index++);
+			if(index >= testReqs.size() || index >= tests.size()) {
+				break;
+			}
+			test.setName(testReq.getName());
+			test.setDescription(testReq.getDescription());
+			test.setScore(testReq.getScore());
+			testService.update(test);
+			
+			List<TestCaseRequest> testcaseReqs = testReq.getTestcases();
+			for(TestCaseRequest testcaseReq: testcaseReqs) {
+				TestCase testcase = new TestCase();
+				testcase.setTestId(test.getTestId());
+				testcase.setInput(testcaseReq.getInput());
+				testcase.setOutput(testcaseReq.getOutput());
 				testService.update(testcase);
 			}
-			testService.update(test);
 		}
 	}
 
@@ -310,21 +353,97 @@ class TestResponse {
 }
 
 class AssignmentRequest {
-	private Assignment assignment;
-	private List<Test> tests;
+	private String classId, name;
+	private String startTime, endTime, testTime;
+	private List<TestRequest> tests;
 	
 	public AssignmentRequest() {}
 	
-	public Assignment getAssignment() {
-		return assignment;
+	public long getClassId() {
+		return Long.parseLong(classId);
 	}
-	public void setAssignment(Assignment assignment) {
-		this.assignment = assignment;
+	public void setClassId(String classId) {
+		this.classId = classId;
 	}
-	public List<Test> getTests() {
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	public String getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+	public String getTestTime() {
+		return testTime;
+	}
+	public void setTestTime(String testTime) {
+		this.testTime = testTime;
+	}
+	public List<TestRequest> getTests() {
 		return tests;
 	}
-	public void setTests(List<Test> tests) {
+	public void setTests(List<TestRequest> tests) {
 		this.tests = tests;
+	}
+}
+
+class TestRequest {
+	private String name, description, score;
+	private List<TestCaseRequest> testcases;
+	
+	public TestRequest() {}
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public float getScore() {
+		return Float.parseFloat(score);
+	}
+	public void setScore(String score) {
+		this.score = score;
+	}
+	public List<TestCaseRequest> getTestcases() {
+		return testcases;
+	}
+	public void setTestcases(List<TestCaseRequest> testcases) {
+		this.testcases = testcases;
+	}	
+}
+
+class TestCaseRequest {
+	private String input, output;
+	
+	public TestCaseRequest() {}
+	
+	public String getInput() {
+		return input;
+	}
+	public void setInput(String input) {
+		this.input = input;
+	}
+	public String getOutput() {
+		return output;
+	}
+	public void setOutput(String output) {
+		this.output = output;
 	}
 }

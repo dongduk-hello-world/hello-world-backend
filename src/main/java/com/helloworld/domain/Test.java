@@ -19,7 +19,7 @@ public class Test implements Serializable {
 	@Column(name="assignment_id")
 	private long assignmentId;
 	@Column(name="writer_id")
-	private String writerId;
+	private long writerId;
 	@Column(name="file_id")
 	private long fileId;
 	
@@ -45,10 +45,10 @@ public class Test implements Serializable {
 	public void setAssignmentId(long assignmentId) {
 		this.assignmentId = assignmentId;
 	}
-	public String getWriterId() {
+	public long getWriterId() {
 		return writerId;
 	}
-	public void setWriterId(String writerId) {
+	public void setWriterId(long writerId) {
 		this.writerId = writerId;
 	}
 	public long getFileId() {

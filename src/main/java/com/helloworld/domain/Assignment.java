@@ -12,21 +12,25 @@ import javax.persistence.Table;
 @Table(name="ASSIGNMENT")
 public class Assignment implements Serializable {
 	@Id
-	private String assignment_id;
+	private long assignment_id;
+	
 	@ManyToOne
 	@JoinColumn(name="lecture_id")
 	private Lecture lecture;
 	
-	private String writer_id;
+	private long lecture_id;
+	private long writer_id;
 	private String name;
 	private String start_time;
 	private String end_time;
 	private String test_time;
 	
-	public String getAssignment_id() {
+	public Assignment() {}
+	
+	public long getAssignment_id() {
 		return assignment_id;
 	}
-	public void setAssignment_id(String assignment_id) {
+	public void setAssignment_id(long assignment_id) {
 		this.assignment_id = assignment_id;
 	}
 	public Lecture getLecture() {
@@ -35,10 +39,16 @@ public class Assignment implements Serializable {
 	public void setLecture(Lecture lecture) {
 		this.lecture = lecture;
 	}
-	public String getWriter_id() {
+	public long getLecture_id() {
+		return lecture_id;
+	}
+	public void setLecture_id(long lecture_id) {
+		this.lecture_id = lecture_id;
+	}
+	public long getWriter_id() {
 		return writer_id;
 	}
-	public void setWriter_id(String writer_id) {
+	public void setWriter_id(long writer_id) {
 		this.writer_id = writer_id;
 	}
 	public String getName() {
@@ -64,7 +74,5 @@ public class Assignment implements Serializable {
 	}
 	public void setTest_time(String test_time) {
 		this.test_time = test_time;
-	}
-	
-	
+	}	
 }
