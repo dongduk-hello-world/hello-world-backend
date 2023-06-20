@@ -246,11 +246,14 @@ public class AssignmentController {
 	}
 	
 	// user가 제출한 코드를 return
-	@GetMapping("/{assignmentId}/results/{userId}/code/{testId}/")
+	@GetMapping("/{assignmentId}/results/{userId}/code/{testId}")
 	public ResponseEntity<Map<String, Object>> getResultCode(@PathVariable long assignmentId, @PathVariable long userId, @PathVariable long testId, Map<String, Object> model) {
 		List<Submit> submits = submitService.getSubmitListByAssignmentIdAndUserIdAndTestId(assignmentId, userId, testId);
-		Collections.sort(submits);
-		String code = fileService.readFileCode(submits.get(0).getFile());
+		String code = "";
+		if(submits != null && submits.size() > 0) {
+			Collections.sort(submits);
+			code = fileService.readFileCode(submits.get(0).getFile());
+		}
 		model.put("code", code);
 		return ResponseEntity.ok(model);
 	}

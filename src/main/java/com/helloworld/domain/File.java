@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="FILE")
+@Table(name="FILES")
 public class File implements Serializable {
 	@Id
 	@Column(name="file_id")

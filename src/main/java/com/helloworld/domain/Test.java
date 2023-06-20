@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="TEST")
+@Table(name="TESTS")
 public class Test implements Serializable {
 	@Id
 	@Column(name="test_id")

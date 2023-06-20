@@ -50,17 +50,19 @@ public class TestController {
     public ResponseEntity<TestResponseByTest> get(@PathVariable long testId) {
 		com.helloworld.domain.Test test = testService.getTest(testId);
 		TestResponseByTest resultTest = new TestResponseByTest();
-		resultTest.setName(test.getName());
-		resultTest.setDescription(test.getDescription());
-		resultTest.setScore(test.getScore());
-		List<TestCaseResponseByTest> resultTestCase = new ArrayList<>();
-		for(TestCase tc: test.getTestCaseList()) {
-			TestCaseResponseByTest testcase = new TestCaseResponseByTest();
-			testcase.setInput(tc.getInput());
-			testcase.setOutput(tc.getOutput());
-			resultTestCase.add(testcase);
+		if(test != null) {
+			resultTest.setName(test.getName());
+			resultTest.setDescription(test.getDescription());
+			resultTest.setScore(test.getScore());
+			List<TestCaseResponseByTest> resultTestCase = new ArrayList<>();
+			for(TestCase tc: test.getTestCaseList()) {
+				TestCaseResponseByTest testcase = new TestCaseResponseByTest();
+				testcase.setInput(tc.getInput());
+				testcase.setOutput(tc.getOutput());
+				resultTestCase.add(testcase);
+			}
+			resultTest.setTestcases(resultTestCase);
 		}
-		resultTest.setTestcases(resultTestCase);
 		return ResponseEntity.ok(resultTest);
     }
 
