@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.Lecture;
+import com.helloworld.domain.SignUp;
 import com.helloworld.domain.User;
 
 @Repository
@@ -20,11 +21,11 @@ public class JpaUserDAO implements UserDAO {
 	@PersistenceContext
     private EntityManager em;
 	
-	public User getUser(long user_id) throws DataAccessException {
+	public User getUser(String user_id) throws DataAccessException {
         return em.find(User.class, user_id);         
 	}
 
-	public User getUser(long user_id, String password) 
+	public User getUser(String user_id, String password) 
 			throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
                                 "select u from USERS u "
@@ -50,7 +51,7 @@ public class JpaUserDAO implements UserDAO {
         em.merge(user);
 	}
 
-	public void updatePassword(long user_id, String password) throws DataAccessException {
+	public void updatePassword(String user_id, String password) throws DataAccessException {
 		try {
 			Query query = em.createQuery("update USERS u SET u.password = ?1 WHERE u.user_id = ?2");
 			query.setParameter(1, password);
@@ -62,14 +63,23 @@ public class JpaUserDAO implements UserDAO {
 		}
 	}
 
-	public List<Lecture> getProfessorLectureList(long user_id) throws DataAccessException {
-		// 추가
-		return null;
+	public List<Lecture> getProfessorLectureList(String user_id) throws DataAccessException {
+		TypedQuery<Lecture> query = em.createQuery(
+                "select l from LECTURE l "
+                + "where l.professor_id=:id",
+                Lecture.class);
+		query.setParameter("id", user_id);
+        List<Lecture> lectures = query.getResultList();
+
+        return lectures;
 	}
 
-	public List<Lecture> getStudentLectureList(long user_id) throws DataAccessException {
-		// 추가
-		return null;
+	public List<String> getStudentLectureList(String user_id) throws DataAccessException {
+		Query query = em.createQuery("insert SIGNUP lecture_id WHERE user_id = ?1");
+		query.setParameter(1, user_id);
+		List<String> lectures_id = query.getResultList();
+		
+		return lectures_id;
 	}
 
 

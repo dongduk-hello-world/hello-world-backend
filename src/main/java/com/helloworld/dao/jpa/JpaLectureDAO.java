@@ -1,14 +1,19 @@
 package com.helloworld.dao.jpa;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.helloworld.dao.LectureDAO;
-import com.helloworld.domain.Assignment;
 import com.helloworld.domain.Lecture;
+import com.helloworld.domain.SignUp;
 
 @Repository
 public class JpaLectureDAO implements LectureDAO {
@@ -29,6 +34,30 @@ public class JpaLectureDAO implements LectureDAO {
 
 	public Lecture getLecture(long lecture_id) throws DataAccessException {
 		return em.find(Lecture.class, lecture_id);
+	}
+
+	public void signUpLecture(long lecture_id, long user_id) throws DataAccessException {
+		try {
+			Query query = em.createQuery("insert into SIGNUP values(?2, ?1");
+			query.setParameter(1, lecture_id);
+			query.setParameter(2, user_id);
+			
+			SignUp signUp = (SignUp)query.getSingleResult();
+		} catch(NoResultException ex) {
+		    	return;
+		}
+	}
+
+	// 포함 검색(쿼리문이 틀릴 가능성이 높음..)
+	public List<Lecture> getLectureByName(String name) throws DataAccessException {
+		TypedQuery<Lecture> query = em.createQuery(
+                "select l from LECTURE l "
+                + "where l.name LIKE '?1?'",
+                Lecture.class);
+		query.setParameter(1, name);
+        List<Lecture> lectures = query.getResultList();
+
+        return lectures;
 	}
 
 }

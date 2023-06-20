@@ -7,7 +7,7 @@ import org.springframework.dao.DataAccessException;
 import com.helloworld.domain.Assignment;
 
 public interface AssignmentDAO {
-	public long createAssignment(Assignment assignment)throws DataAccessException;
+	public void insertAssignment(Assignment assignment)throws DataAccessException;
 	
 	public void updateAssignment(Assignment assignment)throws DataAccessException;
 	
