@@ -65,13 +65,14 @@ public class TestController {
     	HttpSession session = request.getSession();
     	Submit submit = new Submit();
     	String submitId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
-    	String userId = (String) session.getAttribute("user_id");
+    	String userId = (String) session.getAttribute("email");
 		if(userId == null) {
 			userId = "test";
 		}
+		long seqId = (long) session.getAttribute("user_id");
 		
 		com.helloworld.domain.Test test = testService.getTest(testId);
-		List<TestCase> testcase = test.getTestCaseList();
+		List<TestCase> testcase = testService.getTestCaseList(testId);
 		String path = new ClassPathResource("docker").getPath() + "/" + userId + "/" + testId + "/" + submitId + "/";
 		String error = "";
 		float score = 0;
@@ -127,7 +128,7 @@ public class TestController {
 		codeFile.setFileId(fileId);
 		
 		submit.setSubmitId(Long.parseLong(submitId));
-		submit.setSubmitorId(userId);
+		submit.setSubmitorId(seqId);
 		submit.setAssignmentId(test.getAssignmentId());
 		submit.setTestId(testId);
 		submit.setLanguageType(type);
@@ -146,7 +147,7 @@ public class TestController {
 	@GetMapping("/{testId}/submits")
     public ResponseEntity<Map<Integer, Submit>> getSubjectList(HttpServletRequest request, @PathVariable long testId) {
     	HttpSession session = request.getSession();
-    	String userId = (String) session.getAttribute("user_id");
+    	long userId = (long) session.getAttribute("user_id");
     	List<Submit> submits = new ArrayList<>();
 		List<Submit> ssubmit = (List<Submit>) session.getAttribute("submit_" + testId);
 		List<Submit> dsubmit = submitService.getSubmitListByTestIdAndUserId(testId, userId);

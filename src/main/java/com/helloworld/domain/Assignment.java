@@ -2,11 +2,9 @@ package com.helloworld.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -18,10 +16,8 @@ public class Assignment implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="lecture_id")
 	private Lecture lecture;
-
-	@Column
-	private String writer_id;
 	
+	private String writer_id;
 	private String name;
 	private String start_time;
 	private String end_time;

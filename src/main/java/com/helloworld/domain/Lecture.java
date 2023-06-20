@@ -1,5 +1,7 @@
 package com.helloworld.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="LECTURE")
-public class Lecture {
+public class Lecture implements Serializable {
 	@Id
 	private long lecture_id;
 	@Column

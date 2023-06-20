@@ -12,12 +12,24 @@ import com.helloworld.repository.SubmitRepository;
 public class SubmitService {
 	@Autowired
 	private SubmitRepository submitRepo;
+	
 	public void setSubmitRepo(SubmitRepository repo) {
 		this.submitRepo = repo;
 	}
-	public List<Submit> getSubmitListByTestIdAndUserId(Long testId, String userId) {
+
+	public List<Submit> getSubmitListByAssignmentId(long assignmentId) {
+		return submitRepo.findByAssignmentId(assignmentId);
+	}
+	public List<Submit> getSubmitListByTestIdAndUserId(long testId, long userId) {
 		return submitRepo.findByTestIdAndSubmitorId(testId, userId);
 	}
+	public List<Submit> getSubmitListByAssignmentIdAndUserId(long assignmentId, long userId) {
+		return submitRepo.findByAssignmentIdAndSubmitorId(assignmentId, userId);
+	}
+	public List<Submit> getSubmitListByAssignmentIdAndUserIdAndTestId(long assignmentId, long userId, long testId) {
+		return submitRepo.findByAssignmentIdAndSubmitorIdAndTestId(assignmentId, userId, testId);
+	}
+	
 	public void insert(Submit submit) {
 		submitRepo.save(submit);
 	}
