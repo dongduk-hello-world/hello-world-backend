@@ -37,9 +37,6 @@ public class Submit implements Serializable, Comparable<Submit> {
 	@JoinColumn(name="code_id", referencedColumnName="file_id")
 	private File file;
 	
-	@Transient
-	private String code;
-	
 	@Override
 	public int compareTo(Submit o) {
 		if(o.score < score) {
@@ -48,21 +45,6 @@ public class Submit implements Serializable, Comparable<Submit> {
 			return -1;
 		}
 		return 0;
-	}
-	
-	public void readFileToCode() {
-		String res = "";
-		String path = this.file.getPath();
-		java.io.File f = new java.io.File(path);
-		try {
-			List<String> lines = Files.readAllLines(Paths.get(f.getPath()));
-			for(String l: lines) {
-				res += l + "\n";
-			}
-			setCode(res);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public Submit() {}
@@ -114,12 +96,5 @@ public class Submit implements Serializable, Comparable<Submit> {
 	}
 	public void setFile(File file) {
 		this.file = file;
-		this.readFileToCode();
-	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
 	}
 }

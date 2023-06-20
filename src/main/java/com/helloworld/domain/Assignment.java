@@ -1,6 +1,7 @@
 package com.helloworld.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name="ASSIGNMENT")
@@ -23,9 +26,12 @@ public class Assignment implements Serializable {
 	private long lecture_id;
 	private long writer_id;
 	private String name;
-	private String start_time;
-	private String end_time;
-	private String test_time;
+	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
+	private Date start_time;
+	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
+	private Date end_time;
+	@JsonFormat(pattern="HH:mm", timezone="GMT+9")
+	private Date test_time;
 	
 	public Assignment() {}
 	
@@ -59,22 +65,22 @@ public class Assignment implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getStart_time() {
+	public Date getStart_time() {
 		return start_time;
 	}
-	public void setStart_time(String start_time) {
+	public void setStart_time(Date start_time) {
 		this.start_time = start_time;
 	}
-	public String getEnd_time() {
+	public Date getEnd_time() {
 		return end_time;
 	}
-	public void setEnd_time(String end_time) {
+	public void setEnd_time(Date end_time) {
 		this.end_time = end_time;
 	}
-	public String getTest_time() {
+	public Date getTest_time() {
 		return test_time;
 	}
-	public void setTest_time(String test_time) {
+	public void setTest_time(Date test_time) {
 		this.test_time = test_time;
 	}	
 }
