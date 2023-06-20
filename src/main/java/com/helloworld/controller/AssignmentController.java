@@ -61,7 +61,7 @@ public class AssignmentController {
 		assignment.setStart_time(req.getStart_time());
 		assignment.setTest_time(req.getTest_time());
 		assignment.setEnd_time(req.getEnd_time());
-		long assignmentId = assignmentDAO.createAssignment(assignment);
+		long assignmentId = assignmentDAO.insertAssignmentAndId(assignment);
 		
 		List<TestRequestByAssignment> testReqs = req.getTests();
 		for(TestRequestByAssignment testReq: testReqs) {

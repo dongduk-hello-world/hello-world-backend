@@ -19,9 +19,6 @@ public class JpaAssignmentDAO implements AssignmentDAO {
     private EntityManager em;
 	
 	public void insertAssignment(Assignment assignment) throws DataAccessException {
-//        em.persist(assignment);
-//        Assignment result = em.find(Assignment.class, assignment);
-//        return result.getAssignment_id();
 		em.persist(assignment);
 	}
 
@@ -33,6 +30,12 @@ public class JpaAssignmentDAO implements AssignmentDAO {
         em.remove(assignment);
 	}
 
+	public long insertAssignmentAndId(Assignment assignment) throws DataAccessException {
+		em.persist(assignment);
+      	Assignment result = em.find(Assignment.class, assignment);
+      	return result.getAssignment_id();
+	}
+	
 	public Assignment getAssignment(long assignment_id) throws DataAccessException {
 		return em.find(Assignment.class, assignment_id);
 	}
