@@ -1,5 +1,6 @@
 package com.helloworld.domain;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -9,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="SIGNUP")
-public class SignUp {
+public class SignUp implements Serializable {
 	@Id
 	private String user_id;
 	@Id

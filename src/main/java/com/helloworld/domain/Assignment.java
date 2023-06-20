@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="ASSIGNMENT")
@@ -18,6 +19,7 @@ public class Assignment implements Serializable {
 	@JoinColumn(name="lecture_id")
 	private Lecture lecture;
 	
+	@Transient
 	private long lecture_id;
 	private long writer_id;
 	private String name;

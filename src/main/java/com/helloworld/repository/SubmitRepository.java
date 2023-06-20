@@ -11,5 +11,5 @@ public interface SubmitRepository extends CrudRepository<Submit, Long> {
 	List<Submit> findByTestIdAndSubmitorId(long testId, long submitorId);
 	List<Submit> findByAssignmentIdAndSubmitorId(long assignmentId, long submitorId);
 	List<Submit> findByAssignmentIdAndSubmitorIdAndTestId(long assignmentId, long submitorId, long testId);
-	List<Submit> findDistinctSubmitorIdTopOrderByScoreAndAssignmentId(long assignmentId);
+	// List<Submit> findDistinctSubmitorIdTopOrderByScoreAndAssignmentId(long assignmentId);
 }
