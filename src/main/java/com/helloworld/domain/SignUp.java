@@ -12,18 +12,18 @@ import javax.persistence.Table;
 @Table(name="SIGNUP")
 public class SignUp implements Serializable {
 	@Id
-	private String user_id;
+	private long user_id;
 	@Id
 	private String lecture_id;
 	
 	@ManyToMany(mappedBy="signUps")
 	private Set<User> users;
 
-	public String getUser_id() {
+	public long getUser_id() {
 		return user_id;
 	}
 
-	public void setUser_id(String user_id) {
+	public void setUser_id(long user_id) {
 		this.user_id = user_id;
 	}
 

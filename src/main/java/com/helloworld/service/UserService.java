@@ -19,7 +19,7 @@ public class UserService {
 		userDao.insertUser(user);
 	}
 	
-	public User getUser(String user_id) {
+	public User getUser(long user_id) {
 		return userDao.getUser(user_id);
 	}
 	
@@ -27,16 +27,16 @@ public class UserService {
 		userDao.updateUser(user);
 	}
 	
-	public void UpdatePassword(String user_id, String password) {
+	public void UpdatePassword(long user_id, String password) {
 		userDao.updatePassword(user_id, password);
 	}
 	
 	// 자신이 개설한 강좌(객체)
-	public List<Lecture> getMyLectureByProfessor(String user_id)  {
+	public List<Lecture> getMyLectureByProfessor(long user_id)  {
 		return userDao.getProfessorLectureList(user_id);
 	}
 	// 자신이 수강중인 강좌(id)
-	public List<String> getMyLectureByStudent(String user_id) {
+	public List<String> getMyLectureByStudent(long user_id) {
 		return userDao.getStudentLectureList(user_id);
 	}
 }

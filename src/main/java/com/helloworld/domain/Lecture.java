@@ -13,7 +13,7 @@ public class Lecture implements Serializable {
 	@Id
 	private long lecture_id;
 	@Column
-	private String professor_id;
+	private long professor_id;
 	
 	private int divide;
 	private String invite_code;
@@ -29,10 +29,10 @@ public class Lecture implements Serializable {
 	public void setLecture_id(long lecture_id) {
 		this.lecture_id = lecture_id;
 	}
-	public String getProfessor_id() {
+	public long getProfessor_id() {
 		return professor_id;
 	}
-	public void setProfessor_id(String professor_id) {
+	public void setProfessor_id(long professor_id) {
 		this.professor_id = professor_id;
 	}
 	public int getDivide() {
