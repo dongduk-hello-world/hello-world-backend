@@ -147,7 +147,7 @@ public class TestController {
 	@GetMapping("/{testId}/submits")
     public ResponseEntity<Map<Integer, Submit>> getSubjectList(HttpServletRequest request, @PathVariable long testId) {
     	HttpSession session = request.getSession();
-    	String userId = (String) session.getAttribute("user_id");
+    	long userId = (long) session.getAttribute("user_id");
     	List<Submit> submits = new ArrayList<>();
 		List<Submit> ssubmit = (List<Submit>) session.getAttribute("submit_" + testId);
 		List<Submit> dsubmit = submitService.getSubmitListByTestIdAndUserId(testId, userId);

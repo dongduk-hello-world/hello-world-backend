@@ -42,6 +42,9 @@ public class TestService {
 		Test result = testRepo.save(test);
 		return result;
 	}
+	public void delete(Test test) {
+		testRepo.delete(test);
+	}
 	
 	public List<TestCase> getTestCaseList(Long testId) {
 		return testCaseRepo.findByTestId(testId);
@@ -53,5 +56,8 @@ public class TestService {
 	public TestCase update(TestCase testcase) {
 		TestCase result = testCaseRepo.save(testcase);
 		return result;
+	}
+	public void delete(TestCase testcase) {
+		testCaseRepo.delete(testcase);
 	}
 }

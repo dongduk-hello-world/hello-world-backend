@@ -7,6 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import com.helloworld.domain.Submit;
 
 public interface SubmitRepository extends CrudRepository<Submit, Long> {
-	List<Submit> findByTestIdAndSubmitorId(Long testId, String submitorId);
-	List<Submit> findDistinctSubmitorIdTopOrderByScoreAndAssignmentId(Long assignmentId);
+	List<Submit> findByAssignmentId(long assignmentId);
+	List<Submit> findByTestIdAndSubmitorId(long testId, long submitorId);
+	List<Submit> findByAssignmentIdAndSubmitorId(long assignmentId, long submitorId);
+	List<Submit> findByAssignmentIdAndSubmitorIdAndTestId(long assignmentId, long submitorId, long testId);
+	List<Submit> findDistinctSubmitorIdTopOrderByScoreAndAssignmentId(long assignmentId);
 }
