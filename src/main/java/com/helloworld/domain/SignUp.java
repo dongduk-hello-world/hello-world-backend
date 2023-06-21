@@ -3,17 +3,25 @@ package com.helloworld.domain;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.Data;
+
 @Entity
+@Data
 @Table(name="SIGNUP")
+@IdClass(SignUp.class)
 public class SignUp implements Serializable {
 	@Id
+	@Column(name = "user_id")
 	private long user_id;
 	@Id
+	@Column(name = "lecture_id")
 	private String lecture_id;
 	
 	@ManyToMany(mappedBy="signUps")
