@@ -68,11 +68,16 @@ public class JpaUserDAO implements UserDAO {
 	}
 
 	public List<Long> getStudentLectureList(long user_id) throws DataAccessException {
-		Query query = em.createQuery("select SignUp lecture_id WHERE user_id = ?1");
-		query.setParameter(1, user_id);
-		List<Long> lectures_id = query.getResultList();
-		
-		return lectures_id;
+		List<Long> lectures_id = null;
+		try {
+			Query query = em.createQuery("select SignUp lecture_id WHERE user_id = ?1");
+			query.setParameter(1, user_id);
+			lectures_id = query.getResultList();
+			
+			return lectures_id;
+		} catch (NoResultException ex) {
+			return lectures_id;
+		}
 	}
 
 	public long getUserByEmail(String email) throws DataAccessException {
