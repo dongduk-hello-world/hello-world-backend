@@ -14,22 +14,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helloworld.domain.User;
+import com.helloworld.service.UserService;
+
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+	private final UserService userService;
+	
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 	
 	@PostMapping
-    public User add(@RequestBody User user) {
+    public void add(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
-		return user;
+		userService.insertUser(user);
     }
 
 	@PutMapping("/{userId}/password")
-    public boolean changePassword(@RequestBody String password) {
+    public void changePassword(@PathVariable long userId, @RequestBody String password) {
 		// request body에 있는 password로 변경
-		System.out.println("password를 " + password + "로 변경했습니다~~!!");
-		return true;
+		userService.UpdatePassword(userId, password);
     }
 
 	@GetMapping("/{userId}/subjects")
@@ -59,29 +66,4 @@ public class UserController {
 		return classList;
     }
 	
-}
-
-class User {
-	String email;
-	String password;
-	String name;
-	
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 }
