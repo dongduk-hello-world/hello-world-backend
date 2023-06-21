@@ -45,5 +45,7 @@ public class UserService {
 	}
 	
 	// 이메일 중복 검사
-	
+	public long getUserByEmail(String email) {
+		return userDao.getUserByEmail(email);
+	}
 }
