@@ -25,13 +25,13 @@ public class JpaUserDAO implements UserDAO {
         return em.find(User.class, user_id);         
 	}
 
-	public User getUser(long user_id, String password) 
+	public User getUser(String email, String password) 
 			throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
                                 "select u from USERS u "
-                                + "where u.user_id=:id and u.password=:pw",
+                                + "where u.email=:email and u.password=:pw",
                                 User.class);
-        query.setParameter("id", user_id);
+        query.setParameter("id", email);
         query.setParameter("pw", password);
         User user = null;
         try {

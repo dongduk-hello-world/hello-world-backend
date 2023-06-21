@@ -23,8 +23,8 @@ public class UserService {
 		return userDao.getUser(user_id);
 	}
 	
-	public User getUser(long user_id, String password) {
-		return userDao.getUser(user_id, password);
+	public User getUser(String email, String password) {
+		return userDao.getUser(email, password);
 	}
 	
 	public void updateUser(User user) {
