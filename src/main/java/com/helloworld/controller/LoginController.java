@@ -1,5 +1,8 @@
 package com.helloworld.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -21,16 +24,21 @@ public class LoginController {
 	}
 	
 	@PostMapping
-    public long login(@RequestBody LoginRequest request) {
-		String email = request.getEmail();
-		String password = request.getPassword();
+    public long login(HttpServletRequest request, @RequestBody LoginRequest requestBody) {
+		String email = requestBody.getEmail();
+		String password = requestBody.getPassword();
 		
 		User user = userService.getUser(email, password);
 		
 		if(user == null) {
 			throw new UserNotFoundException("user not found");
 		}
-		return user.getUser_id();
+		
+		long userId = user.getUser_id();
+		HttpSession session = request.getSession();
+		session.setAttribute("user_id", userId);
+		
+		return userId;
     }
 }
 

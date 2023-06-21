@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 import com.helloworld.dao.LectureDAO;
 import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
+import com.helloworld.repository.LectureRepository;
 
 @Service
 public class LectureService {
 
 	@Autowired
 	LectureDAO lectureDao;
+	@Autowired
+	LectureRepository lectureRepo;
 	
 	public void createLecture(Lecture lecture) {
 		lectureDao.insertLecture(lecture);
@@ -43,5 +46,9 @@ public class LectureService {
 	
 	public Lecture getLecture(long lecture_id) {
 		return lectureDao.getLecture(lecture_id);
+	}
+	
+	public List<Lecture> findByFilter(String term, String professor, String language) {
+		return lectureRepo.findByFiltertermStartingWithOrFilterprofessorStartingWithOrFilterlanguageStartingWith(term, professor, language);
 	}
 }
