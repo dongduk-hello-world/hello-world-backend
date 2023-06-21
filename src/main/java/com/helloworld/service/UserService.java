@@ -48,7 +48,7 @@ public class UserService {
 		List<Lecture> lecture = null;
 		List<Long> lectureId = userDao.getStudentLectureList(user_id);
 		
-		for (int i = 0; i < lecture.size(); i++) {
+		for (int i = 0; i < lectureId.size(); i++) {
 			lecture.add(i, lectureDao.getLecture(lectureId.get(i)));
 		}
 			
