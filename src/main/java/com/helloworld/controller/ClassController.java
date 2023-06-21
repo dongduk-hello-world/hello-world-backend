@@ -7,17 +7,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helloworld.domain.Assignment;
 import com.helloworld.domain.Lecture;
 import com.helloworld.domain.User;
 import com.helloworld.service.LectureService;
@@ -62,10 +71,23 @@ public class ClassController {
 		return ResponseEntity.ok(model);
     }
 	
+	@Transactional
 	@PostMapping
-    public List<String> add() {
+    @ResponseStatus(HttpStatus.OK)
+    public void add(HttpServletRequest request, @RequestBody ClassRequest req) {
 		// request body에 있는 정보로 class 등록
-		return null;
+		HttpSession session = request.getSession();
+		long userId = (long) session.getAttribute("user_id");
+		
+		Lecture l = new Lecture();
+		l.setProfessor_id(userId);
+		l.setName(req.getName());;
+		l.setDescription(req.getDescription());
+		l.setInvite_code(req.getInvite_code());
+		l.setPeriod(req.getPeriod());
+		l.setDivide(req.getDivide());
+		
+		long classId = lectureService.insertLectureAndId(l);
     }
 
 	// class의 상세 정보
@@ -81,15 +103,25 @@ public class ClassController {
 		response.setProfessor(u.getName());
 		return ResponseEntity.ok(response);
     }
+	
+	@Transactional
+    @ResponseStatus(HttpStatus.OK)
 	@PutMapping("/{classId}")
-	public List<String> update(@PathVariable long classId) {
+	public void update(@RequestBody ClassRequest req, @PathVariable long classId) {
 		// class 정보 변경
-		return null;
+		Lecture l = lectureService.getLecture(classId);
+		l.setName(req.getName());
+		l.setPeriod(req.getPeriod());
+		l.setDescription(req.getDescription());
+		l.setInvite_code(req.getInvite_code());
+		
+		lectureService.updateLecture(l);
     }
 	@DeleteMapping("/{classId}")
-	public List<String> delete(@PathVariable long classId) { 
+	public void delete(@PathVariable long classId) { 
 		// class 삭제
-		return null;
+		Lecture l = lectureService.getLecture(classId);
+		lectureService.deleteLecture(l);
     }
 	
 	@GetMapping("/{classId}/assignments")
@@ -150,9 +182,9 @@ public class ClassController {
 		return null;
     }
 	@DeleteMapping("/{classId}/students/{userId}")
-	public List<String> withdraw(@PathVariable long classId, @PathVariable long userId) { 
+	public void withdraw(@PathVariable long userId, @PathVariable long classId) { 
 		// class 수강 탈퇴
-		return null;
+		lectureService.withdrawStudent(userId, classId);
     }
 	
 	
@@ -195,4 +227,74 @@ class ClassResponse {
 	public void setDivide(int divide) {
 		this.divide = divide;
 	}
+}
+
+class ClassRequest {
+	private long class_id;
+	private long professor_id;
+	
+	private int divide;
+	private String invite_code;
+	private String name;
+	private String description;
+	private String period;
+	
+	public ClassRequest() {}
+
+	public long getClass_id() {
+		return class_id;
+	}
+
+	public void setClass_id(long class_id) {
+		this.class_id = class_id;
+	}
+
+	public long getProfessor_id() {
+		return professor_id;
+	}
+
+	public void setProfessor_id(long professor_id) {
+		this.professor_id = professor_id;
+	}
+
+	public int getDivide() {
+		return divide;
+	}
+
+	public void setDivide(int divide) {
+		this.divide = divide;
+	}
+
+	public String getInvite_code() {
+		return invite_code;
+	}
+
+	public void setInvite_code(String invite_code) {
+		this.invite_code = invite_code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+	
 }

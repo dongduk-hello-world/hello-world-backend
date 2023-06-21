@@ -22,6 +22,10 @@ public class LectureService {
 		lectureDao.insertLecture(lecture);
 	}
 	
+	public long insertLectureAndId(Lecture lecture) {
+		return lectureDao.insertLectureAndId(lecture);
+	}
+	
 	public void updateLecture(Lecture lecture) {
 		lectureDao.updateLecture(lecture);
 	}
@@ -63,4 +67,9 @@ public class LectureService {
 	public List<Lecture> findByFilterlanguage(String language) {
 		return lectureRepo.findByFilterlanguageStartingWith(language);
 	}
+
+	public Iterable<Lecture> findAll() {
+		return lectureRepo.findAll();
+	}
+
 }

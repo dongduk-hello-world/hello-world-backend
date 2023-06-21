@@ -13,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.helloworld.dao.LectureDAO;
+import com.helloworld.domain.Assignment;
 import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
 
@@ -25,7 +26,21 @@ public class JpaLectureDAO implements LectureDAO {
 	public void insertLecture(Lecture lecture) throws DataAccessException {
         em.persist(lecture);
 	}
-
+	
+	public long insertLectureAndId(Lecture lecture) throws DataAccessException {
+		em.persist(lecture);
+      	Lecture result = em.find(Lecture.class, lecture);
+      	return result.getLecture_id();
+	}
+	
+	public List<Assignment> findByLectureId(long lecture_id) throws DataAccessException {
+		Query query = em.createQuery(
+                "select a from Assignment a where a.lecture_id = ?1", String.class);
+        query.setParameter(1, lecture_id);
+        List<Assignment> assignments = query.getResultList();
+        
+        return assignments;
+	}
 	public void updateLecture(Lecture lecture) throws DataAccessException {
 		em.merge(lecture);
 	}

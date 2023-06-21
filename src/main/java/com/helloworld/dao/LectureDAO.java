@@ -12,6 +12,8 @@ import com.helloworld.domain.User;
 public interface LectureDAO {
 	public void insertLecture(Lecture lecture) throws DataAccessException;
 	
+	public long insertLectureAndId(Lecture lecture) throws DataAccessException;
+
 	public void updateLecture(Lecture lecture) throws DataAccessException;
 	
 	public void deleteLecture(Lecture lecture)throws DataAccessException;
