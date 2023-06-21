@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helloworld.domain.Lecture;
 import com.helloworld.domain.User;
 import com.helloworld.service.UserService;
 
@@ -40,30 +41,11 @@ public class UserController {
     }
 
 	@GetMapping("/{userId}/subjects")
-    public Map<Integer, Map<String, String>> getSubjectList(@PathVariable long userId) {
-		Map<String, String> classInfo1 = new HashMap<>();
-		Map<Integer, Map<String, String>> classList = new HashMap<>();
-//		List<String> classList = new ArrayList<>();
+    public Map<String, List<Lecture>> getSubjectList(@PathVariable long userId) {
+		Map<String, List<Lecture>> data = new HashMap<>();
+		data.put("classes", userService.getMyLectureByStudent(userId));
 		
-		classInfo1.put("classId", "0");
-		classInfo1.put("className", "소프트웨어시스템개발");
-		classInfo1.put("professor", "박창섭");
-		classInfo1.put("period", "2023년 1학기");
-		classInfo1.put("divide", "1");
-		
-		classList.put(0, classInfo1);
-		
-		Map<String, String> classInfo2 = new HashMap<>();
-		
-		classInfo2.put("classId", "1");
-		classInfo2.put("className", "문제해결기법");
-		classInfo2.put("professor", "한혁");
-		classInfo2.put("period", "2023년 1학기");
-		classInfo2.put("divide", "3");
-		
-		classList.put(1, classInfo2);
-		
-		return classList;
+		return data;
     }
 	
 }
