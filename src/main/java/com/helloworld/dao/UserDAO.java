@@ -11,6 +11,8 @@ public interface UserDAO {
 	User getUser(long user_id) throws DataAccessException;
 	/* user_id와 password로 user 가져오기 */
 	User getUser(long user_id, String password) throws DataAccessException;
+	/* email로 user 가져오기 */
+	long getUserByEmail(String email) throws DataAccessException;
 	/* User Create */
 	void insertUser(User user) throws DataAccessException;
 	/* User Update */

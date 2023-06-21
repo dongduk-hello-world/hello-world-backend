@@ -23,6 +23,10 @@ public class UserService {
 		return userDao.getUser(user_id);
 	}
 	
+	public User getUser(long user_id, String password) {
+		return userDao.getUser(user_id, password);
+	}
+	
 	public void updateUser(User user) {
 		userDao.updateUser(user);
 	}
@@ -39,4 +43,7 @@ public class UserService {
 	public List<String> getMyLectureByStudent(long user_id) {
 		return userDao.getStudentLectureList(user_id);
 	}
+	
+	// 이메일 중복 검사
+	
 }
