@@ -30,7 +30,7 @@ public class JpaUserDAO implements UserDAO {
 	public User getUser(String email, String password) 
 			throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
-                                "select u from USERS u "
+                                "select u from USER u "
                                 + "where u.email=:email and u.password=:pw",
                                 User.class);
         query.setParameter("id", email);
@@ -54,7 +54,7 @@ public class JpaUserDAO implements UserDAO {
 
 	public void updatePassword(long user_id, String password) throws DataAccessException {
 		try {
-			Query query = em.createQuery("update USERS u SET u.password = ?1 WHERE u.user_id = ?2");
+			Query query = em.createQuery("update USER u SET u.password = ?1 WHERE u.user_id = ?2");
 			query.setParameter(1, password);
 			query.setParameter(2, user_id);
 			
