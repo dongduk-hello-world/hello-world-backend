@@ -365,7 +365,8 @@ class TestResponseByAssignment {
 }
 
 class AssignmentRequest {
-	private String classId, name;
+	private long classId;
+	private String name;
 	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
 	private Date start_time;
 	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
@@ -377,9 +378,9 @@ class AssignmentRequest {
 	public AssignmentRequest() {}
 	
 	public long getClassId() {
-		return Long.parseLong(classId);
+		return classId;
 	}
-	public void setClassId(String classId) {
+	public void setClassId(long classId) {
 		this.classId = classId;
 	}
 	public String getName() {
@@ -415,7 +416,8 @@ class AssignmentRequest {
 }
 
 class TestRequestByAssignment {
-	private String name, description, score;
+	private String name, description;
+	private float score;
 	private List<TestCaseRequestByAssignment> testcases;
 	
 	public TestRequestByAssignment() {}
@@ -433,9 +435,9 @@ class TestRequestByAssignment {
 		this.description = description;
 	}
 	public float getScore() {
-		return Float.parseFloat(score);
+		return score;
 	}
-	public void setScore(String score) {
+	public void setScore(float score) {
 		this.score = score;
 	}
 	public List<TestCaseRequestByAssignment> getTestcases() {

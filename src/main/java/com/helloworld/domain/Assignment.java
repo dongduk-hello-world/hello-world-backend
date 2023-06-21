@@ -95,5 +95,6 @@ public class Assignment implements Serializable {
 	}
 	public void setTest_time(Date test_time) {
 		this.test_time = test_time;
-	}	
+	}
+	
 }
