@@ -53,15 +53,8 @@ public class JpaUserDAO implements UserDAO {
 	}
 
 	public void updatePassword(long user_id, String password) throws DataAccessException {
-		try {
-			Query query = em.createQuery("update User u set u.password = ?1 where u.user_id = ?2");
-			query.setParameter(1, password);
-			query.setParameter(2, user_id);
-			
-			User u = (User)query.getSingleResult();
-		} catch(NoResultException ex) {
-        	return;
-		}
+		User u = em.find(User.class, user_id);
+		u.setPassword(password);
 	}
 
 	public List<Lecture> getProfessorLectureList(long user_id) throws DataAccessException {
