@@ -33,7 +33,7 @@ public class JpaUserDAO implements UserDAO {
                                 "select u from User u "
                                 + "where u.email=:email and u.password=:pw",
                                 User.class);
-        query.setParameter("id", email);
+        query.setParameter("email", email);
         query.setParameter("pw", password);
         User user = null;
         try {
