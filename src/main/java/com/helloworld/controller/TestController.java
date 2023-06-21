@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,28 @@ public class TestController {
 	@Autowired TestService testService;
 	@Autowired SubmitService submitService;
 	@Autowired DockerService dockerService;
+	
+	// 알고리즘 검증
+	@GetMapping("/session/{score}")
+	public ResponseEntity<Map<Integer, Float>> get(HttpServletRequest request, @PathVariable float score) {
+		HttpSession session = request.getSession();
+		Map<Integer, Float> data = (Map<Integer, Float>) session.getAttribute("top");		
+		if(data == null) {
+			data = new HashMap<>();
+			data.put(0, score);
+			session.setAttribute("top", data);
+		} else {
+			data.put(data.size(), score);
+			List<Float> list = new ArrayList<>(data.values());
+			Collections.sort(list);
+			data = new HashMap<>();
+			for(int i = 0; i < list.size() && i < 5; i++) {
+				data.put(i, list.get(i));
+			}
+			session.setAttribute("top", data);
+		}
+		return ResponseEntity.ok(data);
+	}
 	
 	// test의 정보 가져오기
 	@GetMapping("/{testId}")
@@ -151,36 +174,22 @@ public class TestController {
 		ts.setFileSize(fileSize);
 		ts.setScore(score);
 		
-		boolean isTop = false;
 		if(data == null) {
 			data = new HashMap<>();
-			isTop = true;
+			data.put(0, ts);
+			session.setAttribute(sessionId, ts);
 		} else {
-			if(data.get(0).getScore() <= score) {
-				isTop = true;
+			data.put(data.size(), ts);
+			List<TestSubmitSession> list = new ArrayList<>(data.values());
+			Collections.sort(list);
+			data = new HashMap<>();
+			for(int i = 0; i < list.size() && i < 5; i++) {
+				data.put(i, list.get(i));
 			}
-			int idx = data.size()-1;
-			if(idx >= 4) {
-				for(; idx >= 0; idx--) {
-					if(data.get(idx).getScore() > score)
-						break;
-				}
-				for(int i = 4; i > idx; i--) {
-					if(data.get(i-1) != null) {
-						data.put(i, data.get(i-1));
-					}
-				}
-				if(idx != data.size()-1) {
-					data.put(idx, ts);
-					session.setAttribute(sessionId, data);
-				}
-			} else {
-				data.put(idx+1, ts);
-				session.setAttribute(sessionId, data);
-			}
+			session.setAttribute(sessionId, data);
 		}
 		
-		if(isTop) {
+		if(data.get(0).getScore() == ts.getScore()) {
 			com.helloworld.domain.File codeFile = new com.helloworld.domain.File();
 			codeFile.setName(main.getName());
 			codeFile.setPath(main.getPath());
@@ -362,7 +371,7 @@ class TestSubmitRequest {
 	}
 }
 
-class TestSubmitSession {
+class TestSubmitSession implements Comparable<TestSubmitSession> {
 	private long runTime;
 	private float fileSize, score;
 	private String submitTime, language, errorMsg, code;
@@ -410,5 +419,15 @@ class TestSubmitSession {
 	}
 	public void setCode(String code) {
 		this.code = code;
+	}
+	
+	@Override
+	public int compareTo(TestSubmitSession ts) {
+		if(this.score < ts.getScore()) {
+			return 1;
+		} else if (this.score > ts.getScore()) {
+			return -1;
+		}
+		return 0;
 	}
 }

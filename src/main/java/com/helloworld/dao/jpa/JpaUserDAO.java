@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.Lecture;
-import com.helloworld.domain.SignUp;
 import com.helloworld.domain.User;
 
 @Repository
@@ -31,7 +30,7 @@ public class JpaUserDAO implements UserDAO {
 	public User getUser(String email, String password) 
 			throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
-                                "select u from USERS u "
+                                "select u from USER u "
                                 + "where u.email=:email and u.password=:pw",
                                 User.class);
         query.setParameter("id", email);
@@ -55,7 +54,7 @@ public class JpaUserDAO implements UserDAO {
 
 	public void updatePassword(long user_id, String password) throws DataAccessException {
 		try {
-			Query query = em.createQuery("update USERS u SET u.password = ?1 WHERE u.user_id = ?2");
+			Query query = em.createQuery("update USER u SET u.password = ?1 WHERE u.user_id = ?2");
 			query.setParameter(1, password);
 			query.setParameter(2, user_id);
 			
@@ -76,10 +75,10 @@ public class JpaUserDAO implements UserDAO {
         return lectures;
 	}
 
-	public List<String> getStudentLectureList(long user_id) throws DataAccessException {
+	public List<Long> getStudentLectureList(long user_id) throws DataAccessException {
 		Query query = em.createQuery("select SIGNUP lecture_id WHERE user_id = ?1");
 		query.setParameter(1, user_id);
-		List<String> lectures_id = query.getResultList();
+		List<Long> lectures_id = query.getResultList();
 		
 		return lectures_id;
 	}

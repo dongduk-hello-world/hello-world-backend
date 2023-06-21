@@ -22,5 +22,5 @@ public interface UserDAO {
 	/* 개설한 강좌 목록 */
 	List<Lecture> getProfessorLectureList(long user_id) throws DataAccessException;
 	/* 수강중인 강좌 목록 */
-	List<String> getStudentLectureList(long user_id) throws DataAccessException;
+	List<Long> getStudentLectureList(long user_id) throws DataAccessException;
 }

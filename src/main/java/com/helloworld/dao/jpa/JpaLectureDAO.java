@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
 
 @Repository
+@Transactional
 public class JpaLectureDAO implements LectureDAO {
 	@PersistenceContext
     private EntityManager em;
@@ -38,7 +40,7 @@ public class JpaLectureDAO implements LectureDAO {
 
 	public void signUpLecture(long lecture_id, long user_id) throws DataAccessException {
 		try {
-			Query query = em.createQuery("insert into SIGNUP values(?2, ?1");
+			Query query = em.createQuery("insert into SIGNUP values(?2, ?1)");
 			query.setParameter(1, lecture_id);
 			query.setParameter(2, user_id);
 			
@@ -62,6 +64,25 @@ public class JpaLectureDAO implements LectureDAO {
 
 	public void leaveLecture(SignUp signup) throws DataAccessException {
 		em.remove(signup);
+	}
+
+	public List<Long> getStudent(long lecture_id) throws DataAccessException {
+		try {
+			Query query = em.createQuery("select user_id from SIGNUP where lecture_id = ?1");
+			query.setParameter(1, lecture_id);
+			List<Long> studentId = query.getResultList();
+			
+			return studentId;
+		} catch(NoResultException ex) {
+			return null;
+		}
+	}
+
+	public void quickStudent(long user_id, long lecture_id) throws DataAccessException {
+		Query query = em.createQuery("delete SIGNUP WHERE user_id = ?1 and lecture_id = ?2");
+		query.setParameter(1, user_id);
+		query.setParameter(2, lecture_id);
+
 	}
 
 }
