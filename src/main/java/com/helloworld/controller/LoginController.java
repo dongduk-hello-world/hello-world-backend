@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helloworld.domain.User;
 import com.helloworld.service.UserService;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @RestController
 @RequestMapping("/login")
@@ -27,12 +25,12 @@ public class LoginController {
 		String email = request.getEmail();
 		String password = request.getPassword();
 		
-//		User user = getUser
+		User user = userService.getUser(email, password);
 		
-		if(!(email.equals("1234@dongduk.ac.kr") && password.equals("1234"))) {
+		if(user == null) {
 			throw new UserNotFoundException("user not found");
 		}
-		return 123;
+		return user.getUser_id();
     }
 }
 
