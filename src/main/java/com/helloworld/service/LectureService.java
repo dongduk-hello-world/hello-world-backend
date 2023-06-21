@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.helloworld.dao.LectureDAO;
+import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
+import com.helloworld.domain.User;
 import com.helloworld.repository.LectureRepository;
 
 @Service
@@ -15,6 +17,8 @@ public class LectureService {
 
 	@Autowired
 	LectureDAO lectureDao;
+	@Autowired
+	UserDAO userDao;
 	@Autowired
 	LectureRepository lectureRepo;
 	
@@ -50,6 +54,17 @@ public class LectureService {
 	
 	public Lecture getLecture(long lecture_id) {
 		return lectureDao.getLecture(lecture_id);
+	}
+	
+	public List<User> getStudent(long lecture_id) {
+		List<User> student = null;
+		List<Long> studentId = lectureDao.getStudent(lecture_id);
+		
+		for (int i = 0; i < studentId.size(); i++) {
+			student.add(i, userDao.getUser(studentId.get(i)));
+		}
+			
+		return student;
 	}
 	
 	public List<Lecture> findByFilter(String term, String professor, String language) {
