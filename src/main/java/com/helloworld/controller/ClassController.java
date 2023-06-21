@@ -2,8 +2,10 @@ package com.helloworld.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +35,20 @@ public class ClassController {
 	@GetMapping
     public ResponseEntity<Map<String, Object>> getClassList(@RequestParam(value="", required=false) String term, @RequestParam(value="", required=false) String professor, @RequestParam(value="", required=false) String language, Map<String, Object> model) { // query string 추가 필요
 		List<ClassResponse> classes = new ArrayList<>();
-		List<Lecture> list = lectureService.findByFilter(term, professor, language);
-		for(Lecture l: list) {
+		Set<Lecture> set = new HashSet<>();
+		if(!term.isBlank()) {
+			List<Lecture> tList = lectureService.findByFilterterm(term);
+			set.addAll(tList);
+		}
+		if(!professor.isBlank()) {
+			List<Lecture> pList = lectureService.findByFilterprofessor(professor);
+			set.addAll(pList);
+		}
+		if(!language.isBlank()) {
+			List<Lecture> lList = lectureService.findByFilterlanguage(language);
+			set.addAll(lList);
+		}
+		for(Lecture l: set) {
 			User u = userService.getUser(l.getProfessor_id());
 			ClassResponse c = new ClassResponse();
 			c.setClassId(l.getLecture_id());
