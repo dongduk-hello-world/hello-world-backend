@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.helloworld.dao.LectureDAO;
 import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.User;
 import com.helloworld.domain.Lecture;
@@ -14,6 +15,8 @@ public class UserService {
 
 	@Autowired
 	private UserDAO userDao;
+	@Autowired
+	private LectureDAO lectureDao;
 	
 	public void insertUser(User user) {
 		userDao.insertUser(user);
@@ -39,9 +42,17 @@ public class UserService {
 	public List<Lecture> getMyLectureByProfessor(long user_id)  {
 		return userDao.getProfessorLectureList(user_id);
 	}
-	// 자신이 수강중인 강좌(id)
-	public List<String> getMyLectureByStudent(long user_id) {
-		return userDao.getStudentLectureList(user_id);
+	
+	// 자신이 수강중인 강좌(객체)
+	public List<Lecture> getMyLectureByStudent(long user_id) {
+		List<Lecture> lecture = null;
+		List<Long> lectureId = userDao.getStudentLectureList(user_id);
+		
+		for (int i = 0; i < lecture.size(); i++) {
+			lecture.add(i, lectureDao.getLecture(lectureId.get(i)));
+		}
+			
+		return lecture;
 	}
 	
 	// 이메일 중복 검사
