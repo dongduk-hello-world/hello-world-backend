@@ -33,7 +33,7 @@ public class ClassController {
 	// class list 반환
 	// 기본적으로 전체, query string에 따라 검색해서
 	@GetMapping
-    public ResponseEntity<Map<String, Object>> getClassList(@RequestParam(required=false) String term, @RequestParam(required=false) String professor, @RequestParam(required=false) String language, Map<String, Object> model) { // query string 추가 필요
+    public ResponseEntity<Map<String, Object>> getClassList(@RequestParam(required=false) String term, @RequestParam(required=false) String professor, @RequestParam(required=false) String language, Map<String, Object> model) {
 		List<ClassResponse> classes = new ArrayList<>();
 		Set<Lecture> set = new HashSet<>();
 		if(term != null) {
@@ -67,19 +67,19 @@ public class ClassController {
 		// request body에 있는 정보로 class 등록
 		return null;
     }
-	
+
+	// class의 상세 정보
 	@GetMapping("/{classId}")
-    public Map<String, String> get(@PathVariable long classId) {
-		// class의 상세 정보
-		Map<String, String> classInfo = new HashMap<>();
-		
-		classInfo.put("classId", "0");
-		classInfo.put("className", "소프트웨어시스템개발");
-		classInfo.put("professor", "박창섭");
-		classInfo.put("period", "2023년 1학기");
-		classInfo.put("divide", "1");
-		
-		return classInfo;
+    public ResponseEntity<ClassResponse> get(@PathVariable long classId) {
+		ClassResponse response = new ClassResponse();
+		Lecture l = lectureService.getLecture(classId);
+		User u = userService.getUser(l.getProfessor_id());
+		response.setClassId(classId);
+		response.setClassName(l.getName());
+		response.setDivide(l.getDivide());
+		response.setPeriod(l.getPeriod());
+		response.setProfessor(u.getName());
+		return ResponseEntity.ok(response);
     }
 	@PutMapping("/{classId}")
 	public List<String> update(@PathVariable long classId) {
