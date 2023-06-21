@@ -8,9 +8,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import com.helloworld.dao.SequenceDAO;
 import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
@@ -20,6 +22,9 @@ import com.helloworld.domain.User;
 public class JpaUserDAO implements UserDAO {
 	@PersistenceContext
     private EntityManager em;
+	
+	@Autowired
+	private SequenceDAO sequenceDao;
 	
 	public User getUser(long user_id) throws DataAccessException {
         return em.find(User.class, user_id);         
@@ -43,8 +48,7 @@ public class JpaUserDAO implements UserDAO {
 	}
 
 	public void insertUser(User user) throws DataAccessException {
-		// 일단 시퀀스 적용 X
-        em.persist(user);
+		em.persist(user);
 	}
 
 	public void updateUser(User user) throws DataAccessException {
