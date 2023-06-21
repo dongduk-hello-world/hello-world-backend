@@ -8,17 +8,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helloworld.service.UserService;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @RestController
 @RequestMapping("/login")
 public class LoginController {
+	private final UserService userService;
+	
+	public LoginController(UserService userService) {
+		this.userService = userService;
+	}
 	
 	@PostMapping
     public long login(@RequestBody LoginRequest request) {
 		String email = request.getEmail();
 		String password = request.getPassword();
+		
+//		User user = getUser
 		
 		if(!(email.equals("1234@dongduk.ac.kr") && password.equals("1234"))) {
 			throw new UserNotFoundException("user not found");
