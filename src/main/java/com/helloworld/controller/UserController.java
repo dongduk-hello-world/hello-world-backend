@@ -35,9 +35,10 @@ public class UserController {
     }
 
 	@PutMapping("/{userId}/password")
-    public void changePassword(@PathVariable long userId, @RequestBody String password) {
+    public void changePassword(@PathVariable long userId, @RequestBody ChangePasswordRequest request) {
 		// request body에 있는 password로 변경
-		userService.UpdatePassword(userId, password);
+		System.out.println("Sssssss " + request.getPassword());
+		userService.UpdatePassword(userId, request.getPassword());
     }
 
 	@GetMapping("/{userId}/subjects")
@@ -48,4 +49,16 @@ public class UserController {
 		return data;
     }
 	
+}
+
+class ChangePasswordRequest {
+	String password;
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }
