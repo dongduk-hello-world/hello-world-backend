@@ -7,24 +7,22 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
-import com.helloworld.dao.SequenceDAO;
 import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
 import com.helloworld.domain.User;
 
 @Repository
+@Transactional
 public class JpaUserDAO implements UserDAO {
 	@PersistenceContext
     private EntityManager em;
-	
-	@Autowired
-	private SequenceDAO sequenceDao;
 	
 	public User getUser(long user_id) throws DataAccessException {
         return em.find(User.class, user_id);         
@@ -78,10 +76,10 @@ public class JpaUserDAO implements UserDAO {
         return lectures;
 	}
 
-	public List<String> getStudentLectureList(long user_id) throws DataAccessException {
+	public List<Long> getStudentLectureList(long user_id) throws DataAccessException {
 		Query query = em.createQuery("select SIGNUP lecture_id WHERE user_id = ?1");
 		query.setParameter(1, user_id);
-		List<String> lectures_id = query.getResultList();
+		List<Long> lectures_id = query.getResultList();
 		
 		return lectures_id;
 	}
