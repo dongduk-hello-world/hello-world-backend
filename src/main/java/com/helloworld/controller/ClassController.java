@@ -33,18 +33,18 @@ public class ClassController {
 	// class list 반환
 	// 기본적으로 전체, query string에 따라 검색해서
 	@GetMapping
-    public ResponseEntity<Map<String, Object>> getClassList(@RequestParam(value="", required=false) String term, @RequestParam(value="", required=false) String professor, @RequestParam(value="", required=false) String language, Map<String, Object> model) { // query string 추가 필요
+    public ResponseEntity<Map<String, Object>> getClassList(@RequestParam(required=false) String term, @RequestParam(required=false) String professor, @RequestParam(required=false) String language, Map<String, Object> model) { // query string 추가 필요
 		List<ClassResponse> classes = new ArrayList<>();
 		Set<Lecture> set = new HashSet<>();
-		if(!term.isBlank()) {
+		if(term != null) {
 			List<Lecture> tList = lectureService.findByFilterterm(term);
 			set.addAll(tList);
 		}
-		if(!professor.isBlank()) {
+		if(professor != null) {
 			List<Lecture> pList = lectureService.findByFilterprofessor(professor);
 			set.addAll(pList);
 		}
-		if(!language.isBlank()) {
+		if(language != null) {
 			List<Lecture> lList = lectureService.findByFilterlanguage(language);
 			set.addAll(lList);
 		}

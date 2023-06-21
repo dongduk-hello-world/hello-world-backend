@@ -20,12 +20,11 @@ public class SignUp implements Serializable {
 	@Id
 	@Column(name = "user_id")
 	private long user_id;
-	@Id
 	@Column(name = "lecture_id")
 	private long lecture_id;
 	
-	@ManyToMany(mappedBy="signUps")
-	private Set<User> users;
+	/*@ManyToMany(mappedBy="signUps")
+	private Set<User> users;*/
 
 	public long getUser_id() {
 		return user_id;
