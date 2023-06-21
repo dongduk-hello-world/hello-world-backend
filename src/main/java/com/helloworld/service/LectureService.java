@@ -71,5 +71,8 @@ public class LectureService {
 	public Iterable<Lecture> findAll() {
 		return lectureRepo.findAll();
 	}
-
+	
+	public void withdrawStudent(long student_id, long lecture_id) {
+		lectureDao.quickStudent(student_id, lecture_id);
+	}
 }
