@@ -40,7 +40,7 @@ public class JpaLectureDAO implements LectureDAO {
 
 	public void signUpLecture(long lecture_id, long user_id) throws DataAccessException {
 		try {
-			Query query = em.createQuery("insert into SIGNUP values(?2, ?1)");
+			Query query = em.createQuery("insert into SignUp values(?2, ?1)");
 			query.setParameter(1, lecture_id);
 			query.setParameter(2, user_id);
 			
@@ -53,7 +53,7 @@ public class JpaLectureDAO implements LectureDAO {
 	// 포함 검색(쿼리문이 틀릴 가능성이 높음..)
 	public List<Lecture> getLectureByName(String name) throws DataAccessException {
 		TypedQuery<Lecture> query = em.createQuery(
-                "select l from LECTURE l "
+                "select l from Lecture l "
                 + "where l.name LIKE '?1?'",
                 Lecture.class);
 		query.setParameter(1, name);
@@ -68,7 +68,7 @@ public class JpaLectureDAO implements LectureDAO {
 
 	public List<Long> getStudent(long lecture_id) throws DataAccessException {
 		try {
-			Query query = em.createQuery("select user_id from SIGNUP where lecture_id = ?1");
+			Query query = em.createQuery("select user_id from SignUp where lecture_id = ?1");
 			query.setParameter(1, lecture_id);
 			List<Long> studentId = query.getResultList();
 			
@@ -79,7 +79,7 @@ public class JpaLectureDAO implements LectureDAO {
 	}
 
 	public void quickStudent(long user_id, long lecture_id) throws DataAccessException {
-		Query query = em.createQuery("delete SIGNUP WHERE user_id = ?1 and lecture_id = ?2");
+		Query query = em.createQuery("delete SignUp WHERE user_id = ?1 and lecture_id = ?2");
 		query.setParameter(1, user_id);
 		query.setParameter(2, lecture_id);
 
