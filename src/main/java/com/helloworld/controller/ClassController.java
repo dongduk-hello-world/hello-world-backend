@@ -176,11 +176,13 @@ public class ClassController {
 		
 		return studentList;
     }
+	@Transactional
 	@PostMapping("/{classId}/students/{userId}/{code}")
 	public List<String> join(@PathVariable long classId, @PathVariable long userId, @PathVariable String code) { 
-		// class 수강 등록
-		return null;
+		// 초대 코드 일치할 때 작성 필요
+		lectureService.signUpLecture(userId, classId);
     }
+	@Transactional
 	@DeleteMapping("/{classId}/students/{userId}")
 	public void withdraw(@PathVariable long userId, @PathVariable long classId) { 
 		// class 수강 탈퇴

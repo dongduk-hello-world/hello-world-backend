@@ -35,7 +35,7 @@ public class LectureService {
 	}
 	
 	// 강의 수강
-	public void signUpLecture(String user_id, long lecture_id) {
+	public void signUpLecture(long user_id, long lecture_id) {
 		lectureDao.signUpLecture(lecture_id, lecture_id);
 	}
 	
