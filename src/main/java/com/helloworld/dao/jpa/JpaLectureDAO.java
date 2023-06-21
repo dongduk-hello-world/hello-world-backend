@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import com.helloworld.domain.Lecture;
 import com.helloworld.domain.SignUp;
 
 @Repository
+@Transactional
 public class JpaLectureDAO implements LectureDAO {
 	@PersistenceContext
     private EntityManager em;
