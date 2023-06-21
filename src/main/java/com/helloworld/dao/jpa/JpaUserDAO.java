@@ -83,8 +83,12 @@ public class JpaUserDAO implements UserDAO {
 	}
 
 	public long getUserByEmail(String email) throws DataAccessException {
-		User result = em.find(User.class, email);
-		return result.getUser_id();
+        try {
+    		User result = em.find(User.class, email);
+    		return result.getUser_id();
+        } catch(NoResultException ex) {
+        	return 0;
+        }
 	}
 
 
