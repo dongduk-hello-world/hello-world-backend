@@ -33,9 +33,14 @@ public class Lecture implements Serializable {
 	private String name;
 	private String description;
 	private String period;
-	private String filter_professor;
-	private String filter_term;
-	private String filter_language;
+
+	@Column(name="filter_professor")
+	private String filterprofessor;
+	@Column(name="filter_term")
+	private String filterterm;
+	@Column(name="filter_language")
+	private String filterlanguage;
+
 	public long getLecture_id() {
 		return lecture_id;
 	}
@@ -78,24 +83,22 @@ public class Lecture implements Serializable {
 	public void setPeriod(String period) {
 		this.period = period;
 	}
-	public String getFilter_professor() {
-		return filter_professor;
+	public String getFilterprofessor() {
+		return filterprofessor;
 	}
-	public void setFilter_professor(String filter_professor) {
-		this.filter_professor = filter_professor;
+	public void setFilterprofessor(String filterprofessor) {
+		this.filterprofessor = filterprofessor;
 	}
-	public String getFilter_term() {
-		return filter_term;
+	public String getFilterterm() {
+		return filterterm;
 	}
-	public void setFilter_term(String filter_term) {
-		this.filter_term = filter_term;
+	public void setFilterterm(String filterterm) {
+		this.filterterm = filterterm;
 	}
-	public String getFilter_language() {
-		return filter_language;
+	public String getFilterlanguage() {
+		return filterlanguage;
 	}
-	public void setFilter_language(String filter_language) {
-		this.filter_language = filter_language;
+	public void setFilterlanguage(String filterlanguage) {
+		this.filterlanguage = filterlanguage;
 	}
-	
-	
 }

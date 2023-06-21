@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import com.helloworld.domain.Lecture;
 
 public interface LectureRepository extends CrudRepository<Lecture, Long> {
-	List<Lecture> findByFilter_termStartingWithOrFilter_professorStartingWithOrFilter_languageStartingWith(String filterTerm, String filterProfessor, String filterLanguage);	
+	List<Lecture> findByFiltertermStartingWithOrFilterprofessorStartingWithOrFilterlanguageStartingWith(String filterTerm, String filterProfessor, String filterLanguage);	
 }

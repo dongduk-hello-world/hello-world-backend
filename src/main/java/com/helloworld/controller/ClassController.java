@@ -31,7 +31,7 @@ public class ClassController {
 	// class list 반환
 	// 기본적으로 전체, query string에 따라 검색해서
 	@GetMapping
-    public ResponseEntity<Map<String, Object>> getClassList(@RequestParam String term, @RequestParam String professor, @RequestParam String language, Map<String, Object> model) { // query string 추가 필요
+    public ResponseEntity<Map<String, Object>> getClassList(@RequestParam(value="", required=false) String term, @RequestParam(value="", required=false) String professor, @RequestParam(value="", required=false) String language, Map<String, Object> model) { // query string 추가 필요
 		List<ClassResponse> classes = new ArrayList<>();
 		List<Lecture> list = lectureService.findByFilter(term, professor, language);
 		for(Lecture l: list) {

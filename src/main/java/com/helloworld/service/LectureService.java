@@ -49,6 +49,6 @@ public class LectureService {
 	}
 	
 	public List<Lecture> findByFilter(String term, String professor, String language) {
-		return lectureRepo.findByFilter_termStartingWithOrFilter_professorStartingWithOrFilter_languageStartingWith(term, professor, language);
+		return lectureRepo.findByFiltertermStartingWithOrFilterprofessorStartingWithOrFilterlanguageStartingWith(term, professor, language);
 	}
 }
