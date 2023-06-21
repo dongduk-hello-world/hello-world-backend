@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
@@ -14,6 +14,7 @@ import com.helloworld.dao.AssignmentDAO;
 import com.helloworld.domain.Assignment;
 
 @Repository
+@Transactional
 public class JpaAssignmentDAO implements AssignmentDAO {
 	@PersistenceContext
     private EntityManager em;

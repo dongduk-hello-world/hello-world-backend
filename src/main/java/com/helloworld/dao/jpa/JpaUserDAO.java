@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import com.helloworld.dao.UserDAO;
 import com.helloworld.domain.Lecture;
-import com.helloworld.domain.SignUp;
 import com.helloworld.domain.User;
 
 @Repository
