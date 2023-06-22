@@ -248,10 +248,12 @@ public class AssignmentController {
 		}
 		for(Test test: tests) {
 			TestResponseByAssignment testRes = testMap.get(test.getTestId());
-			maxScore += test.getScore();
-			testRes.setMaxScore(test.getScore());
-			testRes.setTestName(test.getName());
-			testMap.put(test.getTestId(), testRes);
+			if(testRes != null) {
+				maxScore += test.getScore();
+				testRes.setMaxScore(test.getScore());
+				testRes.setTestName(test.getName());
+				testMap.put(test.getTestId(), testRes);
+			}
 		}
 		List<TestResponseByAssignment> list = new ArrayList<>(testMap.values());
 		model.put("totalScore", maxScore);
