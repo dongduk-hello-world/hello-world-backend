@@ -63,9 +63,9 @@ public class AssignmentController {
 		assignment.setLecture(lecture);
 		assignment.setName(req.getName());
 		assignment.setWriter_id(userId);
-		assignment.setStart_time(req.getStart_time());
-		assignment.setTest_time(req.getTest_time());
-		assignment.setEnd_time(req.getEnd_time());
+		assignment.setStart_time(req.getStartTime());
+		assignment.setTest_time(req.getTestTime());
+		assignment.setEnd_time(req.getEndTime());
 		long assignmentId = assignmentService.insertAssignmentAndId(assignment);
 		
 		List<TestRequestByAssignment> testReqs = req.getTests();
@@ -98,9 +98,9 @@ public class AssignmentController {
 		res.setClassId(assignment.getLecture().getLecture_id());
 		res.setUserId(assignment.getWriter_id());
 		res.setName(assignment.getName());
-		res.setStart_time(assignment.getStart_time());
-		res.setTest_time(assignment.getTest_time());
-		res.setEnd_time(assignment.getEnd_time());	
+		res.setStartTime(assignment.getStart_time());
+		res.setTestTime(assignment.getTest_time());
+		res.setEndTime(assignment.getEnd_time());	
 		model.put("assignment", res);
 		return ResponseEntity.ok(model);
 	}
@@ -115,9 +115,9 @@ public class AssignmentController {
 		lecture = lectureService.getLecture(req.getClassId());
 		assignment.setLecture(lecture);
 		assignment.setName(req.getName());
-		assignment.setStart_time(req.getStart_time());
-		assignment.setTest_time(req.getTest_time());
-		assignment.setEnd_time(req.getEnd_time());
+		assignment.setStart_time(req.getStartTime());
+		assignment.setTest_time(req.getTestTime());
+		assignment.setEnd_time(req.getEndTime());
 		assignmentService.updateAssignment(assignment);
 
 		List<TestRequestByAssignment> testReqs = req.getTests();
@@ -346,11 +346,11 @@ class AssignmentResponse {
 	private long assignmentId, classId, userId;
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	private Date start_time;
+	private Date startTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	private Date end_time;
+	private Date endTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
-	private Date test_time;
+	private Date testTime;
 	
 	public AssignmentResponse() {}
 	
@@ -378,23 +378,23 @@ class AssignmentResponse {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Date getStart_time() {
-		return start_time;
+	public Date getStartTime() {
+		return startTime;
 	}
-	public void setStart_time(Date start_time) {
-		this.start_time = start_time;
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
-	public Date getEnd_time() {
-		return end_time;
+	public Date getEndTime() {
+		return endTime;
 	}
-	public void setEnd_time(Date end_time) {
-		this.end_time = end_time;
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
-	public Date getTest_time() {
-		return test_time;
+	public Date getTestTime() {
+		return testTime;
 	}
-	public void setTest_time(Date test_time) {
-		this.test_time = test_time;
+	public void setTestTime(Date testTime) {
+		this.testTime = testTime;
 	}
 }
 
@@ -441,11 +441,11 @@ class AssignmentRequest {
 	private long classId;
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	private Date start_time;
+	private Date startTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	private Date end_time;
+	private Date endTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
-	private Date test_time;
+	private Date testTime;
 	private List<TestRequestByAssignment> tests;
 	
 	public AssignmentRequest() {}
@@ -462,23 +462,23 @@ class AssignmentRequest {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Date getStart_time() {
-		return start_time;
+	public Date getStartTime() {
+		return startTime;
 	}
-	public void setStart_time(Date start_time) {
-		this.start_time = start_time;
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
-	public Date getEnd_time() {
-		return end_time;
+	public Date getEndTime() {
+		return endTime;
 	}
-	public void setEnd_time(Date end_time) {
-		this.end_time = end_time;
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
-	public Date getTest_time() {
-		return test_time;
+	public Date getTestTime() {
+		return testTime;
 	}
-	public void setTest_time(Date test_time) {
-		this.test_time = test_time;
+	public void setTestTime(Date testTime) {
+		this.testTime = testTime;
 	}
 	public List<TestRequestByAssignment> getTests() {
 		return tests;
