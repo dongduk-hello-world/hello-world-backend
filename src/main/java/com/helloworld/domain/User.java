@@ -37,9 +37,9 @@ public class User implements Serializable {
 	private String email;
 	private String type;
 	
-	@OneToMany
-	@JoinColumn(name="asssignment_id")
-	private List<Assignment> assignmentList;
+//	@OneToMany
+//	@JoinColumn(name="asssignment_id")
+//	private List<Assignment> assignmentList;
 	
 	@ManyToMany
 	@JoinTable()
@@ -85,13 +85,13 @@ public class User implements Serializable {
 		this.type = type;
 	}
 
-	public List<Assignment> getAssignmentList() {
-		return assignmentList;
-	}
-
-	public void setAssignmentList(List<Assignment> assignmentList) {
-		this.assignmentList = assignmentList;
-	}
-	
+//	public List<Assignment> getAssignmentList() {
+//		return assignmentList;
+//	}
+//
+//	public void setAssignmentList(List<Assignment> assignmentList) {
+//		this.assignmentList = assignmentList;
+//	}
+//	
 	
 }
