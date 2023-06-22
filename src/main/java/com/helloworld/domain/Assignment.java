@@ -26,9 +26,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Assignment implements Serializable {
 	@Id
     @GeneratedValue(
-        	strategy = GenerationType.SEQUENCE
-        	, generator = "ASSIGNMENT_SEQ_GENERATOR"
-        )
+    	strategy = GenerationType.SEQUENCE
+        , generator = "ASSIGNMENT_SEQ_GENERATOR"
+    )
 	private long assignment_id;
 	private long writer_id;
 	
@@ -37,9 +37,9 @@ public class Assignment implements Serializable {
 	private Lecture lecture;
 	
 	private String name;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd`T`hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
 	private Date start_time;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd`T`hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
 	private Date end_time;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
 	private Date test_time;

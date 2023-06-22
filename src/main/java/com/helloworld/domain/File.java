@@ -4,13 +4,26 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(
+		name = "FILES_SEQ_GENERATOR"
+		, sequenceName = "FILES_SEQ"
+		, initialValue = 1
+		, allocationSize = 1
+	)
 @Table(name="FILES")
 public class File implements Serializable {
 	@Id
+    @GeneratedValue(
+    		strategy = GenerationType.SEQUENCE
+    		, generator = "FILES_SEQ_GENERATOR"
+    )
 	@Column(name="file_id")
 	private long fileId;
 	private String name;
