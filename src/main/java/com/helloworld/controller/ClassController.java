@@ -89,7 +89,7 @@ public class ClassController {
 		l.setPeriod(req.getPeriod());
 		l.setDivide(req.getDivide());
 		
-		long classId = lectureService.insertLectureAndId(l);
+		lectureService.insertLectureAndId(l);
     }
 
 	// class의 상세 정보

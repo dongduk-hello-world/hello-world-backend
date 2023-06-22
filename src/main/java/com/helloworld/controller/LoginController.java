@@ -37,6 +37,8 @@ public class LoginController {
 		long userId = user.getUser_id();
 		HttpSession session = request.getSession();
 		session.setAttribute("user_id", userId);
+		session.setAttribute("email", email);
+		session.setAttribute("uid", email.split("@")[0]);
 		
 		return userId;
     }
