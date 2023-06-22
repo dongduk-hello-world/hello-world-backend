@@ -1,5 +1,6 @@
 package com.helloworld.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class UserService {
 	
 	// 자신이 수강중인 강좌(객체)
 	public List<Lecture> getMyLectureByStudent(long user_id) {
-		List<Lecture> lecture = null;
+		List<Lecture> lecture = new ArrayList<Lecture>();
 		List<Long> lectureId = userDao.getStudentLectureList(user_id);
 		
 		for (int i = 0; i < lectureId.size(); i++) {

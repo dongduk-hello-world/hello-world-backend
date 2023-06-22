@@ -1,5 +1,7 @@
 package com.helloworld.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +59,8 @@ public class LectureService {
 	}
 	
 	public List<User> getStudent(long lecture_id) {
-		List<User> student = null;
+		List<User> student = new ArrayList<User>();
 		List<Long> studentId = lectureDao.getStudent(lecture_id);
-		
 		for (int i = 0; i < studentId.size(); i++) {
 			student.add(i, userDao.getUser(studentId.get(i)));
 		}
