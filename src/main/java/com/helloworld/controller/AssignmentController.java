@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.helloworld.dao.jpa.JpaUserDAO;
 import com.helloworld.domain.Assignment;
 import com.helloworld.domain.Lecture;
@@ -346,10 +348,13 @@ class AssignmentResponse {
 	private long assignmentId, classId, userId;
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date startTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date endTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date testTime;
 	
 	public AssignmentResponse() {}
@@ -441,10 +446,13 @@ class AssignmentRequest {
 	private long classId;
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date startTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date endTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date testTime;
 	private List<TestRequestByAssignment> tests;
 	
