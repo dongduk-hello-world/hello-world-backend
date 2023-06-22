@@ -347,14 +347,11 @@ class ResultAllResponse {
 class AssignmentResponse {
 	private long assignmentId, classId, userId;
 	private String name;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
 	private Date startTime;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
 	private Date endTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date testTime;
 	
 	public AssignmentResponse() {}
@@ -445,14 +442,11 @@ class TestResponseByAssignment {
 class AssignmentRequest {
 	private long classId;
 	private String name;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
 	private Date startTime;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd'T'hh:mm:ss", timezone="GMT+9")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
 	private Date endTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date testTime;
 	private List<TestRequestByAssignment> tests;
 	
