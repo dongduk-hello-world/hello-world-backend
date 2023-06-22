@@ -104,7 +104,7 @@ public class TestController {
 
     	HttpSession session = request.getSession();
     	Submit submit = new Submit();
-    	String submitId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
+    	String containerId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     	String userId = (String) session.getAttribute("uid");
 		if(userId == null) {
 			userId = "test";
@@ -113,7 +113,7 @@ public class TestController {
 		
 		com.helloworld.domain.Test test = testService.getTest(testId);
 		List<TestCase> testcase = testService.getTestCaseList(testId);
-		String path = new ClassPathResource("docker").getPath() + "/" + userId + "/" + testId + "/" + submitId + "/";
+		String path = new ClassPathResource("docker").getPath() + "/" + userId + "/" + testId + "/" + containerId + "/";
 		String error = "";
 		float score = 0;
 
@@ -132,7 +132,7 @@ public class TestController {
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
 	    	}
-			String output = dockerService.test(type, code, testId, testCaseId, submitId, userId);
+			String output = dockerService.test(type, code, testId, testCaseId, containerId, userId);
 			output = output.trim();
 			if(output.equals(tc.getOutput())) {
 				score += test.getScore() / testcase.size();
@@ -175,7 +175,7 @@ public class TestController {
 			e.printStackTrace();
 		}
 		TestSubmitSession ts = new TestSubmitSession();
-		ts.setSubmitTime(submitId);
+		ts.setSubmitTime(containerId);
 		ts.setRunTime(runTime);
 		ts.setCode(code);
 		ts.setLanguage(type);
@@ -216,6 +216,7 @@ public class TestController {
 			submit.setRuntime(runTime);
 			submit.setScore(score);
 			submit.setFile(codeFile);
+			submit.setContainerId(Long.parseLong(containerId));
 			submitService.insert(submit);
 		}
     }

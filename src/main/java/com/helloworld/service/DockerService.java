@@ -153,6 +153,9 @@ public class DockerService {
     					key = k;
     				}
     				output = result.get(key);
+    				if(output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION")) {
+    					break;
+    				}
     			} else {
         			result = terminal(cmd + " openjdk:8 java Main", true);
         			if(result.get(0) == null) {
@@ -174,6 +177,9 @@ public class DockerService {
     					key = k;
     				}
     				output = result.get(key);
+    				if(output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION")) {
+    					break;
+    				}
     			} else {
         			result = terminal(cmd + " gcc:4.9 ./main", true);
         			if(result.get(0) == null) {

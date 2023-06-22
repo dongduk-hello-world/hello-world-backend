@@ -34,6 +34,8 @@ public class Submit implements Serializable, Comparable<Submit> {
 	private long assignmentId;
 	@Column(name="submitor_id")
 	private long submitorId;
+	@Column(name="container_id")
+	private long containerId;
 	
 	@Column(name="language_type")
 	private String languageType;
@@ -80,6 +82,12 @@ public class Submit implements Serializable, Comparable<Submit> {
 	}
 	public void setSubmitorId(long submitorId) {
 		this.submitorId = submitorId;
+	}
+	public long getContainerId() {
+		return containerId;
+	}
+	public void setContainerId(long containerId) {
+		this.containerId = containerId;
 	}
 	public String getLanguageType() {
 		return languageType;
