@@ -347,7 +347,7 @@ class AssignmentResponse {
 	private Date start_time;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date end_time;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
 	private Date test_time;
 	
 	public AssignmentResponse() {}
@@ -442,7 +442,7 @@ class AssignmentRequest {
 	private Date start_time;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date end_time;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
 	private Date test_time;
 	private List<TestRequestByAssignment> tests;
 	
