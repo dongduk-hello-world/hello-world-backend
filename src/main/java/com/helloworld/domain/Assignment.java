@@ -27,14 +27,9 @@ public class Assignment implements Serializable {
 	@Id
     @GeneratedValue(
         	strategy = GenerationType.SEQUENCE
-        	, generator = "ASSIGNMENT_SEQ_GENERATOR"
+        	, generator = "ASSIGN MENT_SEQ_GENERATOR"
         )
 	private long assignment_id;
-	
-	@ManyToOne
-	@JoinColumn(name="lecture_id")
-	private Lecture lecture;
-	
 	@Transient
 	private long lecture_id;
 	private long writer_id;
@@ -53,12 +48,6 @@ public class Assignment implements Serializable {
 	}
 	public void setAssignment_id(long assignment_id) {
 		this.assignment_id = assignment_id;
-	}
-	public Lecture getLecture() {
-		return lecture;
-	}
-	public void setLecture(Lecture lecture) {
-		this.lecture = lecture;
 	}
 	public long getLecture_id() {
 		return lecture_id;
