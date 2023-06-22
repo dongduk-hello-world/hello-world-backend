@@ -368,11 +368,11 @@ class TestResponseByAssignment {
 class AssignmentRequest {
 	private long classId;
 	private String name;
-	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date start_time;
-	@JsonFormat(pattern="YYYY-MM-DD HH:mm", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date end_time;
-	@JsonFormat(pattern="HH:mm", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date test_time;
 	private List<TestRequestByAssignment> tests;
 	
