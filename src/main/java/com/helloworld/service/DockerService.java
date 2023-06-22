@@ -124,7 +124,12 @@ public class DockerService {
     			break;
     	}
     	Map<Integer, String> result = null;
-    	result = terminal("pwd");
+    	
+    	try {
+    		result = terminal("cmd /c cd ,");
+    	} catch(Exception e) {
+    		result = terminal("pwd");
+    	}
     	String output = "[실행결과없음]";
     	String cmd = "docker run --rm -v " + result.get(0).replace("\n", "") + "/" + tpath + ":/usr/src/" + spath + "/" + " -w /usr/src/" + spath;
     	switch(type) {
