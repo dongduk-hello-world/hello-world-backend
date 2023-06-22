@@ -33,8 +33,8 @@ public class JpaAssignmentDAO implements AssignmentDAO {
 
 	public long insertAssignmentAndId(Assignment assignment) throws DataAccessException {
 		em.persist(assignment);
-      	Assignment result = em.find(Assignment.class, assignment);
-      	return result.getAssignment_id();
+		em.flush();
+      	return assignment.getAssignment_id();
 	}
 	
 	public Assignment getAssignment(long assignment_id) throws DataAccessException {
