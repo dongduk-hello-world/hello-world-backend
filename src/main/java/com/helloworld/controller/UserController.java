@@ -33,6 +33,11 @@ public class UserController {
 		// request body에 있는 정보로 user 등록
 		userService.insertUser(user);
     }
+	
+	@GetMapping("/{userId}")
+	public User getUser(@PathVariable long userId) {
+		return userService.getUser(userId);
+	}
 
 	@PutMapping("/{userId}/password")
     public void changePassword(@PathVariable long userId, @RequestBody ChangePasswordRequest request) {
