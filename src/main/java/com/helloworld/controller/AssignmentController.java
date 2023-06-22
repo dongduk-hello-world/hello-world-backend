@@ -26,14 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.helloworld.dao.jpa.JpaAssignmentDAO;
 import com.helloworld.dao.jpa.JpaUserDAO;
 import com.helloworld.domain.Assignment;
+import com.helloworld.domain.Lecture;
 import com.helloworld.domain.Submit;
 import com.helloworld.domain.Test;
 import com.helloworld.domain.TestCase;
 import com.helloworld.service.AssignmentService;
 import com.helloworld.service.FileService;
+import com.helloworld.service.LectureService;
 import com.helloworld.service.SubmitService;
 import com.helloworld.service.TestService;
 
@@ -46,6 +47,7 @@ public class AssignmentController {
 	@Autowired TestService testService;
 	@Autowired SubmitService submitService;
 	@Autowired AssignmentService assignmentService;
+	@Autowired LectureService lectureService;
 	
 	// assignment 등록
 	@Transactional
@@ -56,7 +58,9 @@ public class AssignmentController {
 		long userId = (long) session.getAttribute("user_id");
 		
 		Assignment assignment = new Assignment();
-		assignment.setLecture_id(req.getClassId());
+		Lecture lecture = new Lecture();
+		lecture = lectureService.getLecture(req.getClassId());
+		assignment.setLecture(lecture);
 		assignment.setName(req.getName());
 		assignment.setWriter_id(userId);
 		assignment.setStart_time(req.getStart_time());
@@ -88,8 +92,16 @@ public class AssignmentController {
 	// assignment 정보 return
 	@GetMapping("/{assignmentId}")
 	public ResponseEntity<Map<String, Object>> get(@PathVariable long assignmentId, Map<String, Object> model) {
-		Assignment result = assignmentService.getAssignment(assignmentId);
-		model.put("assignment", result);
+		Assignment assignment = assignmentService.getAssignment(assignmentId);
+		AssignmentResponse res = new AssignmentResponse();
+		res.setAssignmentId(assignment.getAssignment_id());
+		res.setClassId(assignment.getLecture().getLecture_id());
+		res.setUserId(assignment.getWriter_id());
+		res.setName(assignment.getName());
+		res.setStart_time(assignment.getStart_time());
+		res.setTest_time(assignment.getTest_time());
+		res.setEnd_time(assignment.getEnd_time());	
+		model.put("assignment", res);
 		return ResponseEntity.ok(model);
 	}
 
@@ -99,7 +111,9 @@ public class AssignmentController {
     @ResponseStatus(HttpStatus.OK)
 	public void update(@RequestBody AssignmentRequest req, @PathVariable long assignmentId) {
 		Assignment assignment = assignmentService.getAssignment(assignmentId);
-		assignment.setLecture_id(req.getClassId());
+		Lecture lecture = new Lecture();
+		lecture = lectureService.getLecture(req.getClassId());
+		assignment.setLecture(lecture);
 		assignment.setName(req.getName());
 		assignment.setStart_time(req.getStart_time());
 		assignment.setTest_time(req.getTest_time());
@@ -323,6 +337,62 @@ class ResultAllResponse {
 	}
 	public void setTestList(List<TestResponseByAssignment> testList) {
 		this.testList = testList;
+	}
+}
+
+class AssignmentResponse {
+	private long assignmentId, classId, userId;
+	private String name;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	private Date start_time;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	private Date end_time;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	private Date test_time;
+	
+	public AssignmentResponse() {}
+	
+	public long getAssignmentId() {
+		return assignmentId;
+	}
+	public void setAssignmentId(long assignmentId) {
+		this.assignmentId = assignmentId;
+	}
+	public long getClassId() {
+		return classId;
+	}
+	public void setClassId(long classId) {
+		this.classId = classId;
+	}
+	public long getUserId() {
+		return userId;
+	}
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Date getStart_time() {
+		return start_time;
+	}
+	public void setStart_time(Date start_time) {
+		this.start_time = start_time;
+	}
+	public Date getEnd_time() {
+		return end_time;
+	}
+	public void setEnd_time(Date end_time) {
+		this.end_time = end_time;
+	}
+	public Date getTest_time() {
+		return test_time;
+	}
+	public void setTest_time(Date test_time) {
+		this.test_time = test_time;
 	}
 }
 

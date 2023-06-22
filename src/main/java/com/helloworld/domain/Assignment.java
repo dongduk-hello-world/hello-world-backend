@@ -27,18 +27,21 @@ public class Assignment implements Serializable {
 	@Id
     @GeneratedValue(
         	strategy = GenerationType.SEQUENCE
-        	, generator = "ASSIGN MENT_SEQ_GENERATOR"
+        	, generator = "ASSIGNMENT_SEQ_GENERATOR"
         )
 	private long assignment_id;
-	@Transient
-	private long lecture_id;
 	private long writer_id;
+	
+	@ManyToOne
+	@JoinColumn(name="lecture_id")
+	private Lecture lecture;
+	
 	private String name;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date start_time;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date end_time;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
 	private Date test_time;
 	
 	public Assignment() {}
@@ -49,11 +52,11 @@ public class Assignment implements Serializable {
 	public void setAssignment_id(long assignment_id) {
 		this.assignment_id = assignment_id;
 	}
-	public long getLecture_id() {
-		return lecture_id;
+	public Lecture getLecture() {
+		return lecture;
 	}
-	public void setLecture_id(long lecture_id) {
-		this.lecture_id = lecture_id;
+	public void setLecture(Lecture lecture) {
+		this.lecture = lecture;
 	}
 	public long getWriter_id() {
 		return writer_id;
