@@ -16,4 +16,6 @@ public interface AssignmentDAO {
 	Assignment getAssignment(long assignment_id) throws DataAccessException;
 	
 	List<Assignment> findByLectureId(long lecture_id) throws DataAccessException;
+	
+	public long insertAssignmentAndId(Assignment assignment) throws DataAccessException;
 }

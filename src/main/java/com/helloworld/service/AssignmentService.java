@@ -33,4 +33,8 @@ public class AssignmentService {
 	public List<Assignment> fingAssignmentByLectureId(long lecture_id) {
 		return assignmentDao.findByLectureId(lecture_id);
 	}
+
+	public long insertAssignmentAndId(Assignment assignment) {
+		return assignmentDao.insertAssignmentAndId(assignment);
+	}
 }

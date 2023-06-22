@@ -32,6 +32,7 @@ import com.helloworld.domain.Assignment;
 import com.helloworld.domain.Submit;
 import com.helloworld.domain.Test;
 import com.helloworld.domain.TestCase;
+import com.helloworld.service.AssignmentService;
 import com.helloworld.service.FileService;
 import com.helloworld.service.SubmitService;
 import com.helloworld.service.TestService;
@@ -41,10 +42,10 @@ import com.helloworld.service.TestService;
 public class AssignmentController {
 
 	@Autowired JpaUserDAO userDAO;
-	@Autowired JpaAssignmentDAO assignmentDAO;
 	@Autowired FileService fileService;
 	@Autowired TestService testService;
 	@Autowired SubmitService submitService;
+	@Autowired AssignmentService assignmentService;
 	
 	// assignment 등록
 	@Transactional
@@ -61,7 +62,7 @@ public class AssignmentController {
 		assignment.setStart_time(req.getStart_time());
 		assignment.setTest_time(req.getTest_time());
 		assignment.setEnd_time(req.getEnd_time());
-		long assignmentId = assignmentDAO.insertAssignmentAndId(assignment);
+		long assignmentId = assignmentService.insertAssignmentAndId(assignment);
 		
 		List<TestRequestByAssignment> testReqs = req.getTests();
 		for(TestRequestByAssignment testReq: testReqs) {
@@ -87,7 +88,7 @@ public class AssignmentController {
 	// assignment 정보 return
 	@GetMapping("/{assignmentId}")
 	public ResponseEntity<Map<String, Object>> get(@PathVariable long assignmentId, Map<String, Object> model) {
-		Assignment result = assignmentDAO.getAssignment(assignmentId);
+		Assignment result = assignmentService.getAssignment(assignmentId);
 		model.put("assignment", result);
 		return ResponseEntity.ok(model);
 	}
@@ -97,13 +98,13 @@ public class AssignmentController {
 	@PutMapping("/{assignmentId}")
     @ResponseStatus(HttpStatus.OK)
 	public void update(@RequestBody AssignmentRequest req, @PathVariable long assignmentId) {
-		Assignment assignment = assignmentDAO.getAssignment(assignmentId);
+		Assignment assignment = assignmentService.getAssignment(assignmentId);
 		assignment.setLecture_id(req.getClassId());
 		assignment.setName(req.getName());
 		assignment.setStart_time(req.getStart_time());
 		assignment.setTest_time(req.getTest_time());
 		assignment.setEnd_time(req.getEnd_time());
-		assignmentDAO.updateAssignment(assignment);
+		assignmentService.updateAssignment(assignment);
 
 		List<TestRequestByAssignment> testReqs = req.getTests();
 		List<Test> tests = testService.getTestListByAssignmentId(assignment.getAssignment_id());
@@ -133,7 +134,7 @@ public class AssignmentController {
 	@DeleteMapping("/{assignmentId}")
     @ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable long assignmentId) {
-		Assignment data = assignmentDAO.getAssignment(assignmentId);
+		Assignment data = assignmentService.getAssignment(assignmentId);
 		List<Test> tests = testService.getTestListByAssignmentId(assignmentId);
 		for(Test test: tests) {
 			List<TestCase> testcases = test.getTestCaseList();
@@ -142,7 +143,7 @@ public class AssignmentController {
 			}
 			testService.delete(test);
 		}
-		assignmentDAO.deleteAssignment(data);
+		assignmentService.deleteAssignment(data);
 	}
 	
 	// assignment에 있는 test return
