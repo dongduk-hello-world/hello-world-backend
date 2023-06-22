@@ -1,12 +1,14 @@
 package com.helloworld.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -40,7 +42,10 @@ public class Lecture implements Serializable {
 	private String filterterm;
 	@Column(name="filter_language")
 	private String filterlanguage;
-
+	
+	@OneToMany(mappedBy="assignment")
+	private List<Assignment> assignmentList;
+	
 	public long getLecture_id() {
 		return lecture_id;
 	}

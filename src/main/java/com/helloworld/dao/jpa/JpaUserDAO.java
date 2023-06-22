@@ -23,7 +23,7 @@ public class JpaUserDAO implements UserDAO {
     private EntityManager em;
 	
 	public User getUser(long user_id) throws DataAccessException {
-        return em.find(User.class, user_id);         
+        return em.find(User.class, user_id);      
 	}
 
 	public User getUser(String email, String password) 
