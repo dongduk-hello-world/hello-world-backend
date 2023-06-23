@@ -124,7 +124,11 @@ public class TestController {
 	    	System.out.println(input.getPath());
 			try {
 	    		BufferedWriter writer = new BufferedWriter(new FileWriter(input));
-	    		writer.write(tc.getInput());
+	    		if(tc.getInput() == null) {
+	    			writer.write("");
+	    		} else {
+	    			writer.write(tc.getInput());
+	    		}
 	    		writer.close();
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
