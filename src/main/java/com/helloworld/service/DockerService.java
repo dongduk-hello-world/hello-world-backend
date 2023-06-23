@@ -75,7 +75,7 @@ public class DockerService {
     	    	main = new File(tpath + "/Main.py");
     	    	try {
     	    		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
-    	    		writer.write("import sys\r\n" + "sys.stdin = open('input.txt')");
+    	    		writer.write("import sys\r\n" + "sys.stdin = open('input.txt')\r\n");
     	    		writer.write(code);
     	    		writer.close();
     	    	} catch (IOException e) {
@@ -217,14 +217,14 @@ public class DockerService {
 				while((line=stdout.readLine())!=null) {
 					sb.append(line + "\n");
 				}
-				System.out.println("stdout: " + sb.toString());
+				System.out.println("stdout: " + sb.toString().trim());
 			} else {
 				while((line=stderr.readLine())!=null) {
 					sb.append(line + "\n");
 				}
-				System.out.println("stderr: " + sb.toString());
+				System.out.println("stderr: " + sb.toString().trim());
 			}
-			String result = sb.toString();
+			String result = sb.toString().trim();
 			if(skip) {
 				code = 0;
 			}

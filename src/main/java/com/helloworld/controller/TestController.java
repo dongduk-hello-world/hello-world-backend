@@ -133,7 +133,6 @@ public class TestController {
 	    		e.printStackTrace();
 	    	}
 			String output = dockerService.test(type, code, testId, testCaseId, containerId, userId);
-			output = output.trim();
 			if(output.equals(tc.getOutput())) {
 				score += test.getScore() / testcase.size();
 			}
@@ -218,7 +217,7 @@ public class TestController {
 			submit.setRuntime(runTime);
 			submit.setScore(score);
 			submit.setFile(codeFile);
-//			submit.setContainerId(Long.parseLong(containerId));
+			submit.setContainerId(Long.parseLong(containerId));
 			submitService.insert(submit);
 		}
     }
@@ -240,7 +239,7 @@ public class TestController {
 		HighScoreResponse highScore = new HighScoreResponse();
 		
 		if(data != null && data.size() > 0) {
-			for(int i = 1; i < 5; i++) {
+			for(int i = 0; i < 5; i++) {
 				if(data.get(i) == null) {
 					break;
 				}
