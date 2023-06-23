@@ -70,7 +70,7 @@ public class JpaUserDAO implements UserDAO {
 	public List<Long> getStudentLectureList(long user_id) throws DataAccessException {
 		List<Long> lectures_id = null;
 		try {
-			Query query = em.createQuery("select SignUp lecture_id WHERE user_id = ?1");
+			Query query = em.createQuery("select s.lecture_id from SignUp s WHERE s.user_id = ?1");
 			query.setParameter(1, user_id);
 			lectures_id = query.getResultList();
 			
