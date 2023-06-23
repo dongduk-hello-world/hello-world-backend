@@ -196,6 +196,8 @@ public class TestController {
 				data.put(i, list.get(i));
 			}
 			session.setAttribute(sessionId, data);
+			System.out.println(list);
+			System.out.println(data);
 		}
 		
 		if(data.get(0).getScore() == ts.getScore()) {
@@ -230,6 +232,7 @@ public class TestController {
 		Map<Integer, TestSubmitSession> data = null;
 		try {
 			data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+			System.out.println(data);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
