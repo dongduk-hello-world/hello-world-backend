@@ -61,6 +61,11 @@ public class ClassController {
 			List<Lecture> lList = lectureService.findByFilterlanguage(language);
 			set.addAll(lList);
 		}
+		if(term == null && professor == null && language == null) {
+			for(Lecture l: lectureService.findAll()) {
+				set.add(l);
+			}
+		}
 		for(Lecture l: set) {
 			User u = userService.getUser(l.getProfessor_id());
 			ClassResponse c = new ClassResponse();
