@@ -4,13 +4,26 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(
+		name = "TESTCASE_SEQ_GENERATOR"
+		, sequenceName = "TESTCASE_SEQ"
+		, initialValue = 1
+		, allocationSize = 1
+	)
 @Table(name="TESTCASE")
 public class TestCase implements Serializable {
 	@Id
+    @GeneratedValue(
+    		strategy = GenerationType.SEQUENCE
+    		, generator = "TESTCASE_SEQ_GENERATOR"
+	)
 	@Column(name="testcase_id")
 	private long testCaseId;
 	@Column(name="test_id")

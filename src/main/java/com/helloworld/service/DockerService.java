@@ -124,7 +124,12 @@ public class DockerService {
     			break;
     	}
     	Map<Integer, String> result = null;
-    	result = terminal("pwd");
+    	
+    	try {
+    		result = terminal("cmd /c cd ,");
+    	} catch(Exception e) {
+    		result = terminal("pwd");
+    	}
     	String output = "[실행결과없음]";
     	String cmd = "docker run --rm -v " + result.get(0).replace("\n", "") + "/" + tpath + ":/usr/src/" + spath + "/" + " -w /usr/src/" + spath;
     	switch(type) {
@@ -148,6 +153,9 @@ public class DockerService {
     					key = k;
     				}
     				output = result.get(key);
+    				if(output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION")) {
+    					break;
+    				}
     			} else {
         			result = terminal(cmd + " openjdk:8 java Main", true);
         			if(result.get(0) == null) {
@@ -169,6 +177,9 @@ public class DockerService {
     					key = k;
     				}
     				output = result.get(key);
+    				if(output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION")) {
+    					break;
+    				}
     			} else {
         			result = terminal(cmd + " gcc:4.9 ./main", true);
         			if(result.get(0) == null) {

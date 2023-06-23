@@ -104,7 +104,7 @@ public class TestController {
 
     	HttpSession session = request.getSession();
     	Submit submit = new Submit();
-    	String submitId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
+    	String containerId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     	String userId = (String) session.getAttribute("uid");
 		if(userId == null) {
 			userId = "test";
@@ -113,7 +113,7 @@ public class TestController {
 		
 		com.helloworld.domain.Test test = testService.getTest(testId);
 		List<TestCase> testcase = testService.getTestCaseList(testId);
-		String path = new ClassPathResource("docker").getPath() + "/" + userId + "/" + testId + "/" + submitId + "/";
+		String path = new ClassPathResource("docker").getPath() + "/" + userId + "/" + testId + "/" + containerId + "/";
 		String error = "";
 		float score = 0;
 
@@ -121,7 +121,10 @@ public class TestController {
 		for(TestCase tc: testcase) {
 			long testCaseId = tc.getTestCaseId();
 			String tpath = path + testCaseId;
+	    	File mkdir = new File(tpath);
+	    	mkdir.mkdirs();
 			File input = new File(tpath + "/input.txt");
+	    	System.out.println(input.getPath());
 			try {
 	    		BufferedWriter writer = new BufferedWriter(new FileWriter(input));
 	    		writer.write(tc.getInput());
@@ -129,7 +132,8 @@ public class TestController {
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
 	    	}
-			String output = dockerService.test(type, code, testId, testCaseId, submitId, userId);		
+			String output = dockerService.test(type, code, testId, testCaseId, containerId, userId);
+			output = output.trim();
 			if(output.equals(tc.getOutput())) {
 				score += test.getScore() / testcase.size();
 			}
@@ -164,9 +168,14 @@ public class TestController {
     	}
 
     	String sessionId = "test#" + testId;
-		Map<Integer, TestSubmitSession> data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		Map<Integer, TestSubmitSession> data = null;
+		try {
+			data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		TestSubmitSession ts = new TestSubmitSession();
-		ts.setSubmitTime(submitId);
+		ts.setSubmitTime(containerId);
 		ts.setRunTime(runTime);
 		ts.setCode(code);
 		ts.setLanguage(type);
@@ -177,7 +186,7 @@ public class TestController {
 		if(data == null) {
 			data = new HashMap<>();
 			data.put(0, ts);
-			session.setAttribute(sessionId, ts);
+			session.setAttribute(sessionId, data);
 		} else {
 			data.put(data.size(), ts);
 			List<TestSubmitSession> list = new ArrayList<>(data.values());
@@ -190,13 +199,16 @@ public class TestController {
 		}
 		
 		if(data.get(0).getScore() == ts.getScore()) {
+			List<Submit> s = submitService.getSubmitListByAssignmentIdAndUserIdAndTestId(test.getAssignmentId(), seqId, testId);
+			if(!s.isEmpty()) {
+				submit.setSubmitId(s.get(0).getSubmitId());
+			}
 			com.helloworld.domain.File codeFile = new com.helloworld.domain.File();
 			codeFile.setName(main.getName());
 			codeFile.setPath(main.getPath());
 			long fileId = fileService.insert(codeFile);
 			codeFile.setFileId(fileId);
-			
-			submit.setSubmitId(Long.parseLong(submitId));
+
 			submit.setSubmitorId(seqId);
 			submit.setAssignmentId(test.getAssignmentId());
 			submit.setTestId(testId);
@@ -204,6 +216,7 @@ public class TestController {
 			submit.setRuntime(runTime);
 			submit.setScore(score);
 			submit.setFile(codeFile);
+//			submit.setContainerId(Long.parseLong(containerId));
 			submitService.insert(submit);
 		}
     }
@@ -214,7 +227,12 @@ public class TestController {
     	HttpSession session = request.getSession();
     	String sessionId = "test#" + testId;
     	Test test = testService.getTest(testId);
-		Map<Integer, TestSubmitSession> data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		Map<Integer, TestSubmitSession> data = null;
+		try {
+			data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		List<TestSubmitSession> submits = new ArrayList<>();
 		HighScoreResponse highScore = new HighScoreResponse();
 		
@@ -245,7 +263,12 @@ public class TestController {
     public ResponseEntity<CodeResponse> submit(HttpServletRequest request, @PathVariable long testId, @PathVariable int index) {
 		HttpSession session = request.getSession();
 		String sessionId = "test#" + testId;
-		Map<Integer, TestSubmitSession> data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		Map<Integer, TestSubmitSession> data = null;
+		try {
+			data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		CodeResponse response = new CodeResponse();
 		if(data != null && data.get(index) != null) {
 			TestSubmitSession result = data.get(index);

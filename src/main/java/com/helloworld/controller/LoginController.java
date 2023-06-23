@@ -5,7 +5,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.helloworld.domain.User;
 import com.helloworld.service.UserService;
 
+@CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/login")
 public class LoginController {
@@ -21,6 +23,12 @@ public class LoginController {
 	
 	public LoginController(UserService userService) {
 		this.userService = userService;
+	}
+	
+	@GetMapping
+	public long getLoginedUserId(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		return (long) session.getAttribute("user_id");
 	}
 	
 	@PostMapping
@@ -37,9 +45,17 @@ public class LoginController {
 		long userId = user.getUser_id();
 		HttpSession session = request.getSession();
 		session.setAttribute("user_id", userId);
+		session.setAttribute("email", email);
+		session.setAttribute("uid", email.split("@")[0]);
 		
 		return userId;
     }
+	
+	@PostMapping("/logout")
+	public void logout(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.setAttribute("user_id", null);
+	}
 }
 
 class LoginRequest {
