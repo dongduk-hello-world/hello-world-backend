@@ -11,9 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 @Entity
 @SequenceGenerator(
@@ -26,9 +27,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Assignment implements Serializable {
 	@Id
     @GeneratedValue(
-        	strategy = GenerationType.SEQUENCE
-        	, generator = "ASSIGNMENT_SEQ_GENERATOR"
-        )
+    	strategy = GenerationType.SEQUENCE
+        , generator = "ASSIGNMENT_SEQ_GENERATOR"
+    )
 	private long assignment_id;
 	private long writer_id;
 	
@@ -37,11 +38,14 @@ public class Assignment implements Serializable {
 	private Lecture lecture;
 	
 	private String name;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date start_time;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/mm/dd hh:mm:ss", timezone="GMT+9")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date end_time;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm", timezone="GMT+9")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private Date test_time;
 	
 	public Assignment() {}
