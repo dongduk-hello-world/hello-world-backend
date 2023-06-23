@@ -216,7 +216,7 @@ public class TestController {
 			submit.setRuntime(runTime);
 			submit.setScore(score);
 			submit.setFile(codeFile);
-			submit.setContainerId(Long.parseLong(containerId));
+//			submit.setContainerId(Long.parseLong(containerId));
 			submitService.insert(submit);
 		}
     }

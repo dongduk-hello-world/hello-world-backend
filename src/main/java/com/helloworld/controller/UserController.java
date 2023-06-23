@@ -3,6 +3,10 @@ package com.helloworld.controller;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import java.util.HashMap;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -53,7 +57,6 @@ public class UserController {
 		
 		return data;
     }
-	
 }
 
 class ChangePasswordRequest {
