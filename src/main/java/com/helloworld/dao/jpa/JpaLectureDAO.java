@@ -56,11 +56,13 @@ public class JpaLectureDAO implements LectureDAO {
 
 	public void signUpLecture(long lecture_id, long user_id) throws DataAccessException {
 		try {
-			Query query = em.createQuery("insert into SignUp s (s.user_id, s.lecture_id) values(?2, ?1)");
-			query.setParameter(1, lecture_id);
-			query.setParameter(2, user_id);
 			
-			SignUp signUp = (SignUp)query.getSingleResult();
+			SignUp signUp = new SignUp();
+			
+			signUp.setLecture_id(lecture_id);
+			signUp.setUser_id(user_id);
+			
+			em.persist(signUp);
 		} catch(NoResultException ex) {
 		    	return;
 		}
