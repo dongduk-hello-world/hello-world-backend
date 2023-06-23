@@ -43,7 +43,7 @@ public class JpaAssignmentDAO implements AssignmentDAO {
 
 	public List<Assignment> findByLectureId(long lecture_id) throws DataAccessException {
 		Query query = em.createQuery(
-                "select a from Assignment a where a.lecture_id = ?1", String.class);
+                "select a from Assignment a where a.lecture_id = ?1", Assignment.class);
         query.setParameter(1, lecture_id);
         List<Assignment> assignments = query.getResultList();
         
