@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import com.helloworld.service.AssignmentService;
 import com.helloworld.service.LectureService;
 import com.helloworld.service.UserService;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/classes")
 public class ClassController {
@@ -149,8 +151,9 @@ public class ClassController {
     }
 	@Transactional
 	@DeleteMapping("/{classId}/students/{userId}")
-	public void withdraw(@PathVariable long userId, @PathVariable long classId) { 
+	public void withdraw(@PathVariable long classId, @PathVariable long userId) { 
 		// class 수강 탈퇴
+		System.out.println("값 도달" + classId + ", " +  userId);
 		lectureService.withdrawStudent(userId, classId);
     }
 	
