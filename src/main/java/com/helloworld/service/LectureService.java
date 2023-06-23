@@ -89,6 +89,7 @@ public class LectureService {
 	}
 	
 	public void withdrawStudent(long student_id, long lecture_id) {
+		System.out.println("withdraw");
 		lectureDao.quickStudent(student_id, lecture_id);
 	}
 }

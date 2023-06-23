@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.helloworld.dao.LectureDAO;
 import com.helloworld.domain.Assignment;
@@ -97,7 +98,8 @@ public class JpaLectureDAO implements LectureDAO {
 		Query query = em.createQuery("delete SignUp WHERE user_id = ?1 and lecture_id = ?2");
 		query.setParameter(1, user_id);
 		query.setParameter(2, lecture_id);
-
+		System.out.println("dao 학생퇴출");
+		em.clear();
 	}
 
 }

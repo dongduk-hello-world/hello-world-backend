@@ -75,7 +75,7 @@ public class DockerService {
     	    	main = new File(tpath + "/Main.py");
     	    	try {
     	    		BufferedWriter writer = new BufferedWriter(new FileWriter(main));
-    	    		writer.write("import sys\r\n" + "sys.stdin = open('input.txt')");
+    	    		writer.write("import sys\r\n" + "sys.stdin = open('input.txt')\r\n");
     	    		writer.write(code);
     	    		writer.close();
     	    	} catch (IOException e) {
@@ -147,16 +147,14 @@ public class DockerService {
     			break;
     		case "java":
     			result = terminal(cmd + " openjdk:8 javac Main.java", true);
+    			output = result.get(0);
     			if(result.get(0) == null) {
     				int key = 0;
     				for(Integer k : result.keySet()) {
     					key = k;
     				}
     				output = result.get(key);
-    				if(output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION")) {
-    					break;
-    				}
-    			} else {
+    			} else if(!output.toUpperCase().contains("ERROR") && !output.toUpperCase().contains("EXCEPTION")) {
         			result = terminal(cmd + " openjdk:8 java Main", true);
         			if(result.get(0) == null) {
         				int key = 0;
@@ -171,16 +169,14 @@ public class DockerService {
     			break;
     		case "c":
     			result = terminal(cmd + " gcc:4.9 gcc -o main main.c", true);
+    			output = result.get(0);
     			if(result.get(0) == null) {
     				int key = 0;
     				for(Integer k : result.keySet()) {
     					key = k;
     				}
     				output = result.get(key);
-    				if(output.toUpperCase().contains("ERROR") || output.toUpperCase().contains("EXCEPTION")) {
-    					break;
-    				}
-    			} else {
+    			} else if(!output.toUpperCase().contains("ERROR") && !output.toUpperCase().contains("EXCEPTION")) {
         			result = terminal(cmd + " gcc:4.9 ./main", true);
         			if(result.get(0) == null) {
         				int key = 0;
@@ -221,14 +217,14 @@ public class DockerService {
 				while((line=stdout.readLine())!=null) {
 					sb.append(line + "\n");
 				}
-				System.out.println("stdout: " + sb.toString());
+				System.out.println("stdout: " + sb.toString().trim());
 			} else {
 				while((line=stderr.readLine())!=null) {
 					sb.append(line + "\n");
 				}
-				System.out.println("stderr: " + sb.toString());
+				System.out.println("stderr: " + sb.toString().trim());
 			}
-			String result = sb.toString();
+			String result = sb.toString().trim();
 			if(skip) {
 				code = 0;
 			}
