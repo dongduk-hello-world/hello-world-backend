@@ -73,7 +73,7 @@ public class TestController {
     public ResponseEntity<TestResponseByTest> get(@PathVariable long testId) {
 		com.helloworld.domain.Test test = testService.getTest(testId);
 		TestResponseByTest resultTest = new TestResponseByTest();
-		if(test != null) {
+		if(test != null) {			
 			resultTest.setName(test.getName());
 			resultTest.setDescription(test.getDescription());
 			resultTest.setScore(test.getScore());
@@ -106,9 +106,6 @@ public class TestController {
     	Submit submit = new Submit();
     	String containerId = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     	String userId = (String) session.getAttribute("uid");
-		if(userId == null) {
-			userId = "test";
-		}
 		long seqId = (long) session.getAttribute("user_id");
 		
 		com.helloworld.domain.Test test = testService.getTest(testId);
@@ -452,7 +449,8 @@ class TestSubmitSession implements Comparable<TestSubmitSession> {
 			return 1;
 		} else if (this.score > ts.getScore()) {
 			return -1;
+		} else {
+			return -this.submitTime.compareTo(ts.getSubmitTime());
 		}
-		return 0;
 	}
 }

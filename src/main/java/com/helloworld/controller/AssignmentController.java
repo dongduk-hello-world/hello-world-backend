@@ -1,5 +1,7 @@
 package com.helloworld.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -162,8 +164,38 @@ public class AssignmentController {
 	
 	// assignment에 있는 test return
 	@GetMapping("/{assignmentId}/tests")
-	public ResponseEntity<Map<String, Object>> getTestList(@PathVariable long assignmentId, Map<String, Object> model) {
+	public ResponseEntity<Map<String, Object>> getTestList(HttpServletRequest request, @PathVariable long assignmentId, Map<String, Object> model) {
+    	HttpSession session = request.getSession();
 		List<Test> list = testService.getTestListByAssignmentId(assignmentId);
+		for(Test t: list) {
+			long testId = t.getTestId();
+			long seqId = (long) session.getAttribute("user_id");
+			String sessionId = "test#" + testId;
+			Map<Integer, TestSubmitSession> data = null;
+			TestSubmitSession ts = new TestSubmitSession();
+			Submit s = submitService.getSubmitListByTestIdAndUserId(testId, seqId).get(0);
+			try {
+				data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			if(data == null && s != null) {
+				ts.setSubmitTime(String.valueOf(s.getContainerId()));
+				ts.setRunTime((long)s.getRuntime());
+				ts.setCode(fileService.readFileCode(s.getFile()));
+				ts.setLanguage(s.getLanguageType());
+				ts.setErrorMsg("");
+				try {
+					ts.setFileSize(Files.size(Paths.get(s.getFile().getPath())));
+				} catch(Exception e) {
+					ts.setFileSize(0);
+				}
+				ts.setScore(s.getScore());
+				data = new HashMap<>();
+				data.put(0, ts);
+				session.setAttribute(sessionId, data);
+			}
+		}
 		model.put("tests", list);
 		return ResponseEntity.ok(model);
 	}
