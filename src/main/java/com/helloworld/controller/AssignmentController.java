@@ -168,7 +168,11 @@ public class AssignmentController {
 			String sessionId = "test#" + testId;
 			Map<Integer, TestSubmitSession> data = null;
 			TestSubmitSession ts = new TestSubmitSession();
-			Submit s = submitService.getSubmitListByTestIdAndUserId(testId, seqId).get(0);
+			List<Submit> submitList = submitService.getSubmitListByTestIdAndUserId(testId, seqId);
+			Submit s = null;
+			if(submitList.size() > 0) {
+				s = submitList.get(0);
+			}
 			try {
 				data = (Map<Integer, TestSubmitSession>) session.getAttribute(sessionId);
 			} catch(Exception e) {

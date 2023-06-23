@@ -1,16 +1,14 @@
 package com.helloworld.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,10 +82,10 @@ public class ClassController {
 	@PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void add(HttpServletRequest request, @RequestBody ClassRequest req) {
+		System.out.println(req);
 		// request body에 있는 정보로 class 등록
 		HttpSession session = request.getSession();
 		long userId = (long) session.getAttribute("user_id");
-		
 		Lecture l = new Lecture();
 		l.setProfessor_id(userId);
 		l.setName(req.getName());;
@@ -95,6 +93,7 @@ public class ClassController {
 		l.setInvite_code(req.getInvite_code());
 		l.setPeriod(req.getPeriod());
 		l.setDivide(req.getDivide());
+		System.out.println(l);
 		
 		lectureService.insertLectureAndId(l);
     }
