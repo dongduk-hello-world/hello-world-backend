@@ -126,9 +126,9 @@ public class DockerService {
     	Map<Integer, String> result = null;
     	
     	try {
-    		result = terminal("cmd /c cd ,");
-    	} catch(Exception e) {
     		result = terminal("pwd");
+    	} catch(Exception e) {
+    		result = terminal("cmd /c cd ,");
     	}
     	String output = "[실행결과없음]";
     	String cmd = "docker run --rm -v " + result.get(0).replace("\n", "") + "/" + tpath + ":/usr/src/" + spath + "/" + " -w /usr/src/" + spath;
@@ -201,7 +201,7 @@ public class DockerService {
 		Map<Integer, String> res = new HashMap<>();
 		int code = 0;
 		
-		ProcessBuilder builder = new ProcessBuilder("C:\\Windows\\System32\\cmd.exe");
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash");
 		builder.command(cmd);
 		builder.redirectErrorStream(true);
 
