@@ -3,6 +3,7 @@ package com.helloworld.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,9 +34,8 @@ public class Assignment implements Serializable {
 	private long assignment_id;
 	private long writer_id;
 	
-	@ManyToOne
-	@JoinColumn(name="lecture_id")
-	private Lecture lecture;
+	@Column(name="lecture_id")
+	private long lectureId;
 	
 	private String name;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy/MM/dd'T'hh:mm:ss", timezone="GMT+9")
@@ -56,11 +56,11 @@ public class Assignment implements Serializable {
 	public void setAssignment_id(long assignment_id) {
 		this.assignment_id = assignment_id;
 	}
-	public Lecture getLecture() {
-		return lecture;
+	public long getLectureId() {
+		return lectureId;
 	}
-	public void setLecture(Lecture lecture) {
-		this.lecture = lecture;
+	public void setLectureId(long lectureId) {
+		this.lectureId = lectureId;
 	}
 	public long getWriter_id() {
 		return writer_id;

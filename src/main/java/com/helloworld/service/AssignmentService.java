@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.helloworld.dao.AssignmentDAO;
 import com.helloworld.domain.Assignment;
+import com.helloworld.repository.AssignmentRepository;
 
 @Service
 public class AssignmentService {
 
 	@Autowired
 	AssignmentDAO assignmentDao;
+	@Autowired
+	AssignmentRepository assignmentRepo;
 	
 	public void insertAssignment(Assignment assignment) {
 		assignmentDao.insertAssignment(assignment);
@@ -28,6 +31,10 @@ public class AssignmentService {
 	
 	public Assignment getAssignment(long assignment_id) {
 		return assignmentDao.getAssignment(assignment_id);
+	}
+	
+	public List<Assignment> findByLectureId(long lecture_id) {
+		return assignmentRepo.findByLectureId(lecture_id);
 	}
 	
 	public List<Assignment> fingAssignmentByLectureId(long lecture_id) {

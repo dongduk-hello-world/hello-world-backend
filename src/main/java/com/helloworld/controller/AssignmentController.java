@@ -30,7 +30,6 @@ import org.springframework.web.bind.support.SessionStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.helloworld.dao.jpa.JpaUserDAO;
 import com.helloworld.domain.Assignment;
-import com.helloworld.domain.Lecture;
 import com.helloworld.domain.Submit;
 import com.helloworld.domain.Test;
 import com.helloworld.domain.TestCase;
@@ -60,9 +59,7 @@ public class AssignmentController {
 		long userId = (long) session.getAttribute("user_id");
 		
 		Assignment assignment = new Assignment();
-		Lecture lecture = new Lecture();
-		lecture = lectureService.getLecture(req.getClassId());
-		assignment.setLecture(lecture);
+		assignment.setLectureId(req.getClassId());
 		assignment.setName(req.getName());
 		assignment.setWriter_id(userId);
 		assignment.setStart_time(req.getStartTime());
@@ -97,7 +94,7 @@ public class AssignmentController {
 		Assignment assignment = assignmentService.getAssignment(assignmentId);
 		AssignmentResponse res = new AssignmentResponse();
 		res.setAssignmentId(assignment.getAssignment_id());
-		res.setClassId(assignment.getLecture().getLecture_id());
+		res.setClassId(assignment.getLectureId());
 		res.setUserId(assignment.getWriter_id());
 		res.setName(assignment.getName());
 		res.setStartTime(assignment.getStart_time());
@@ -113,9 +110,7 @@ public class AssignmentController {
     @ResponseStatus(HttpStatus.OK)
 	public void update(@RequestBody AssignmentRequest req, @PathVariable long assignmentId) {
 		Assignment assignment = assignmentService.getAssignment(assignmentId);
-		Lecture lecture = new Lecture();
-		lecture = lectureService.getLecture(req.getClassId());
-		assignment.setLecture(lecture);
+		assignment.setLectureId(req.getClassId());
 		assignment.setName(req.getName());
 		assignment.setStart_time(req.getStartTime());
 		assignment.setTest_time(req.getTestTime());

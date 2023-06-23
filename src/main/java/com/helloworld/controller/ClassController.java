@@ -132,7 +132,7 @@ public class ClassController {
 	@GetMapping("/{classId}/assignments")
 	public List<Assignment> getAssignmentList(@PathVariable long classId) { 
 		// class에 개설된 assignment list
-		List<Assignment> assignments = assignmentService.fingAssignmentByLectureId(classId);
+		List<Assignment> assignments = assignmentService.findByLectureId(classId);
 		return assignments;
     }
 	
