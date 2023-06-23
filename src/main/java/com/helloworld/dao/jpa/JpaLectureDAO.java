@@ -99,7 +99,8 @@ public class JpaLectureDAO implements LectureDAO {
 		query.setParameter(1, user_id);
 		query.setParameter(2, lecture_id);
 		System.out.println("dao 학생퇴출");
-		em.clear();
-	}
+		
+		int rows = query.executeUpdate();
+ 	}
 
 }
