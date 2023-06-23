@@ -26,9 +26,11 @@ public class LoginController {
 	}
 	
 	@GetMapping
-	public long getLoginedUserId(HttpServletRequest request) {
+	public Long getLoginedUserId(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		return (long) session.getAttribute("user_id");
+		if(session.getAttribute("user_id") != null)
+			return (long) session.getAttribute("user_id");
+		return null;
 	}
 	
 	@PostMapping
