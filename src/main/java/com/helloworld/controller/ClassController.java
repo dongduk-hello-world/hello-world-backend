@@ -149,8 +149,8 @@ public class ClassController {
 		return student;
     }
 	@Transactional
-	@PostMapping("/{classId}/students/{userId}/{code}")
-	public void join(@PathVariable long classId, @PathVariable long userId, @PathVariable String code) { 
+	@PostMapping("/{classId}/students/{userId}")
+	public void join(@PathVariable long classId, @PathVariable long userId) { 
 		// 초대 코드 일치할 때 작성 필요
 		lectureService.signUpLecture(userId, classId);
     }
