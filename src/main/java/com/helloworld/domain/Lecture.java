@@ -104,4 +104,11 @@ public class Lecture implements Serializable {
 	public void setFilterlanguage(String filterlanguage) {
 		this.filterlanguage = filterlanguage;
 	}
+	@Override
+	public String toString() {
+		return "Lecture [lecture_id=" + lecture_id + ", professor_id=" + professor_id + ", divide=" + divide
+				+ ", invite_code=" + invite_code + ", name=" + name + ", description=" + description + ", period="
+				+ period + ", filterprofessor=" + filterprofessor + ", filterterm=" + filterterm + ", filterlanguage="
+				+ filterlanguage + "]";
+	}
 }

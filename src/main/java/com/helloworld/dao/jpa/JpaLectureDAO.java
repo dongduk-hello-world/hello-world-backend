@@ -30,7 +30,7 @@ public class JpaLectureDAO implements LectureDAO {
 	
 	public long insertLectureAndId(Lecture lecture) throws DataAccessException {
 		em.persist(lecture);
-      	Lecture result = em.find(Lecture.class, lecture);
+      	Lecture result = em.find(Lecture.class, lecture.getLecture_id());
       	return result.getLecture_id();
 	}
 	
