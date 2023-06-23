@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.helloworld.dao.jpa.JpaUserDAO;
 import com.helloworld.domain.Assignment;
 import com.helloworld.domain.Lecture;
@@ -252,6 +250,7 @@ public class AssignmentController {
 			TestResponseByAssignment testRes = testMap.get(test.getTestId());
 			if(testRes != null) {
 				maxScore += test.getScore();
+				testRes.setTestId(test.getTestId());
 				testRes.setMaxScore(test.getScore());
 				testRes.setTestName(test.getName());
 				testMap.put(test.getTestId(), testRes);
@@ -269,11 +268,14 @@ public class AssignmentController {
 	public ResponseEntity<Map<String, Object>> getResultCode(@PathVariable long assignmentId, @PathVariable long userId, @PathVariable long testId, Map<String, Object> model) {
 		List<Submit> submits = submitService.getSubmitListByAssignmentIdAndUserIdAndTestId(assignmentId, userId, testId);
 		String code = "";
+		String type = "";
 		if(submits != null && submits.size() > 0) {
 			Collections.sort(submits);
 			code = fileService.readFileCode(submits.get(0).getFile());
+			type = submits.get(0).getLanguageType();
 		}
 		model.put("code", code);
+		model.put("language", type);
 		return ResponseEntity.ok(model);
 	}
 }
