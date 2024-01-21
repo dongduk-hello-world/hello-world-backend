@@ -30,6 +30,7 @@ public class JpaLectureDAO implements LectureDAO {
 	
 	public long insertLectureAndId(Lecture lecture) throws DataAccessException {
 		em.persist(lecture);
+		signUpLecture(lecture.getLecture_id(), lecture.getProfessor_id());
       	Lecture result = em.find(Lecture.class, lecture.getLecture_id());
       	return result.getLecture_id();
 	}
@@ -47,6 +48,7 @@ public class JpaLectureDAO implements LectureDAO {
 	}
 
 	public void deleteLecture(Lecture lecture) throws DataAccessException {
+		quickAllStudents(lecture.getLecture_id());
 		em.remove(lecture);
 	}
 
@@ -102,5 +104,10 @@ public class JpaLectureDAO implements LectureDAO {
 		query.setParameter(2, lecture_id);		
 		query.executeUpdate();
  	}
-
+	
+	public void quickAllStudents(long lecture_id) throws DataAccessException {
+		Query query = em.createQuery("delete from SignUp where lecture_id = ?1");
+		query.setParameter(1, lecture_id);
+		query.executeUpdate();
+	}
 }

@@ -85,6 +85,7 @@ public class ClassController {
 		System.out.println(req);
 		// request body에 있는 정보로 class 등록
 		HttpSession session = request.getSession();
+		System.out.println(session.getAttribute("user_id"));
 		long userId = (long) session.getAttribute("user_id");
 		Lecture l = new Lecture();
 		l.setProfessor_id(userId);
@@ -93,6 +94,9 @@ public class ClassController {
 		l.setInvite_code(req.getInvite_code());
 		l.setPeriod(req.getPeriod());
 		l.setDivide(req.getDivide());
+		l.setFilterterm(req.getFilterterm());
+		l.setFilterprofessor(req.getFilterprofessor());
+		l.setFilterlanguage(req.getFilterlanguage());
 		System.out.println(l);
 		
 		lectureService.insertLectureAndId(l);
@@ -213,6 +217,10 @@ class ClassRequest {
 	private String description;
 	private String period;
 	
+	private String filterterm;
+	private String filterprofessor;
+	private String filterlanguage;
+	
 	public ClassRequest() {}
 
 	public long getClass_id() {
@@ -269,6 +277,30 @@ class ClassRequest {
 
 	public void setPeriod(String period) {
 		this.period = period;
+	}
+
+	public String getFilterterm() {
+		return filterterm;
+	}
+
+	public void setFilterterm(String filterterm) {
+		this.filterterm = filterterm;
+	}
+
+	public String getFilterprofessor() {
+		return filterprofessor;
+	}
+
+	public void setFilterprofessor(String filterprofessor) {
+		this.filterprofessor = filterprofessor;
+	}
+
+	public String getFilterlanguage() {
+		return filterlanguage;
+	}
+
+	public void setFilterlanguage(String filterlanguage) {
+		this.filterlanguage = filterlanguage;
 	}
 	
 }
